@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown, Settings, AlertTriangle } from "lucide-react";
+import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown } from "lucide-react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 
@@ -40,12 +40,10 @@ export default function AppDashboard() {
   const [activeTab, setActiveTab] = useState<"search" | "leads" | "compose">("search");
   const [yourSkill, setYourSkill] = useState("");
   const [yourName, setYourName] = useState("");
-  const [apolloKey, setApolloKey] = useState("");
-  const [geminiKey, setGroqKey] = useState("");
+  const [usage, setUsage] = useState<{ plan: string; limit: number; leadCount: number } | null>(null);
 
   useEffect(() => {
-    setApolloKey(localStorage.getItem("leaddrop_apollo_key") || "");
-    setGroqKey(localStorage.getItem("leaddrop_gemini_key") || "");
+    fetch("/api/usage").then((r) => r.json()).then(setUsage).catch(() => {});
   }, []);
 
   const selectedNiche = customNiche || niche;
@@ -53,21 +51,28 @@ export default function AppDashboard() {
 
   async function findLeads() {
     if (!selectedNiche) return;
-    const currentGroqKey = localStorage.getItem("leaddrop_gemini_key") || geminiKey;
     setLoading(true);
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ niche: selectedNiche, geminiKey: currentGroqKey }),
+        body: JSON.stringify({ niche: selectedNiche }),
       });
       const data = await res.json();
+      if (data.limitReached) {
+        if (confirm(`${data.error}\n\nUpgrade to Pro for 500 leads/month?`)) {
+          window.location.href = "/pricing";
+        }
+        return;
+      }
       if (!data.leads || data.leads.length === 0) {
-        alert(data.error || "No leads found. Check your Gemini key in Settings.");
+        alert(data.error || "No leads found. Try a different niche.");
         return;
       }
       setLeads(data.leads.map((l: Omit<Lead, "selected" | "status">) => ({ ...l, selected: true, status: "idle" })));
       setActiveTab("leads");
+      // Refresh usage
+      fetch("/api/usage").then((r) => r.json()).then(setUsage).catch(() => {});
     } catch {
       alert("Failed to fetch leads. Check your API key.");
     } finally {
@@ -83,7 +88,7 @@ export default function AppDashboard() {
       const res = await fetch("/api/generate-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lead, yourSkill, yourName, geminiKey: localStorage.getItem("leaddrop_gemini_key") || geminiKey }),
+        body: JSON.stringify({ lead, yourSkill, yourName }),
       });
       const data = await res.json();
       setLeads((prev) => prev.map((l) =>
@@ -139,29 +144,26 @@ export default function AppDashboard() {
           ))}
         </div>
         <div className="flex items-center gap-3">
+          {usage && (
+            <div className="text-xs text-white/50 hidden md:flex items-center gap-2 bg-white/[0.04] border border-white/[0.06] px-2.5 py-1.5 rounded-lg">
+              <span className="font-semibold text-white">{usage.leadCount}</span>
+              <span className="text-white/30">/</span>
+              <span>{usage.limit === Infinity ? "∞" : usage.limit}</span>
+              <span className="text-white/30">leads</span>
+              <span className="text-[10px] uppercase tracking-wider text-violet-400 font-bold ml-1">{usage.plan}</span>
+            </div>
+          )}
           <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
             <BarChart2 size={13} /> Analytics
           </Link>
-          <Link href="/settings" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
-            <Settings size={13} /> Settings
-          </Link>
-          <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-violet-600/10 border border-violet-600/20 text-violet-400 hover:bg-violet-600/20 px-2.5 py-1.5 rounded-lg transition-colors">
-            <Crown size={12} /> Upgrade
-          </Link>
-          <UserButton afterSignOutUrl="/" />
+          {usage?.plan === "free" && (
+            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-violet-600/10 border border-violet-600/20 text-violet-400 hover:bg-violet-600/20 px-2.5 py-1.5 rounded-lg transition-colors">
+              <Crown size={12} /> Upgrade
+            </Link>
+          )}
+          <UserButton />
         </div>
       </nav>
-
-      {/* Keys missing warning */}
-      {!geminiKey && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-amber-400">
-            <AlertTriangle size={12} />
-            Groq key missing — needed for leads + AI emails
-          </div>
-          <Link href="/settings" className="text-xs text-amber-400 underline hover:text-amber-300">Add key →</Link>
-        </div>
-      )}
 
       <div className="flex-1 max-w-5xl mx-auto w-full px-6 py-8">
 

@@ -1,12 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { getUserUsage, incrementLeads } from "@/lib/usage";
 
 export async function POST(req: NextRequest) {
   try {
-    const { niche, geminiKey } = await req.json();
-    const apiKey = geminiKey || "";
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ leads: [], error: "Unauthorized" }, { status: 401 });
+
+    const { niche } = await req.json();
+    const apiKey = process.env.GROQ_API_KEY || "";
 
     if (!apiKey) {
-      return NextResponse.json({ leads: [], error: "No API key. Go to Settings." }, { status: 400 });
+      return NextResponse.json({ leads: [], error: "Server not configured." }, { status: 500 });
+    }
+
+    // Check usage limits
+    const usage = await getUserUsage(userId);
+    if (usage.leadCount + 20 > usage.limit) {
+      return NextResponse.json(
+        {
+          leads: [],
+          error: `Limit reached. ${usage.leadCount}/${usage.limit} leads used this month. Upgrade your plan.`,
+          limitReached: true,
+          plan: usage.plan,
+        },
+        { status: 403 }
+      );
     }
 
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -48,7 +67,13 @@ Rules: 20 unique people, decision maker roles only (CEO/Founder/CMO/Director/VP)
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     const leads = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
 
-    return NextResponse.json({ leads });
+    // Track usage
+    await incrementLeads(userId, leads.length);
+
+    return NextResponse.json({
+      leads,
+      usage: { used: usage.leadCount + leads.length, limit: usage.limit, plan: usage.plan },
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ leads: [], error: "Failed to generate leads" }, { status: 500 });

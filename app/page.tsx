@@ -41,8 +41,8 @@ const features = [
   },
   {
     icon: Users,
-    title: "Built for freelancers",
-    desc: "No enterprise bloat. No 6-month contracts. No team seats you don't need. One tool, one freelancer, real results.",
+    title: "Built for freelancers & sales reps",
+    desc: "No enterprise bloat. No 6-month contracts. No team seats you don't need. Made for solo operators who close deals.",
     tag: "Simple",
   },
 ];
@@ -153,7 +153,11 @@ const faqs = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Yes. One-click cancel from your dashboard. No retention emails, no friction.",
+    a: "Yes — cancel anytime from your dashboard. You keep access until end of billing period. No refunds on partial months.",
+  },
+  {
+    q: "Do you offer annual billing?",
+    a: "Yes. Pay yearly and save 17% — $190/year for Pro, $490/year for Agency. Best value if you plan to use it long-term.",
   },
   {
     q: "Why is it cheaper than Apollo/Hunter?",
@@ -215,7 +219,7 @@ export default function Home() {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-600/10 border border-violet-600/30 text-violet-300 text-xs font-medium mb-8 fade-up">
           <Sparkles size={12} className="text-fuchsia-400" />
           <span className="shimmer-text font-semibold">New:</span>
-          AI-personalized outreach for freelancers · 2,400+ users
+          AI-personalized outreach for freelancers · 2,400+ freelancers & sales reps
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-8 fade-up-delay-1">
@@ -224,7 +228,7 @@ export default function Home() {
         </h1>
 
         <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed fade-up-delay-2">
-          Find verified leads, generate personalized cold emails with AI, and send in bulk — all from one dashboard. Free forever for the first 20 leads.
+          Built for freelancers, sales reps, and indie agencies. Find verified leads, write personalized cold emails with AI, send in bulk — all from one dashboard.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12 fade-up-delay-3">
@@ -412,11 +416,12 @@ export default function Home() {
             <tbody>
               {[
                 ["Monthly cost", "$19", "$199+", "$149+"],
-                ["AI personalization", "✓", "Extra $$", "Extra $$"],
-                ["Built for freelancers", "✓", "✗", "✗"],
+                ["AI personalization", "Built-in", "Extra $$", "Extra $$"],
+                ["Lead search + outreach in one", "✓", "Need both tools", "Need both tools"],
+                ["For freelancers + sales reps", "✓", "Enterprise only", "Enterprise only"],
                 ["Setup time", "2 min", "30 min", "20 min"],
                 ["Free tier", "20 leads/mo", "Trial only", "25 searches"],
-                ["Cancel anytime", "✓", "Annual lock", "Monthly"],
+                ["Verified emails", "✓", "✓", "✓"],
               ].map(([label, ld, apl, hn]) => (
                 <tr key={label} className="border-b border-white/[0.04] last:border-0">
                   <td className="py-4 pl-4 text-white/70">{label}</td>
@@ -562,7 +567,7 @@ export default function Home() {
                 </div>
                 <span className="font-bold text-sm">LeadDrop</span>
               </div>
-              <p className="text-xs text-white/40 leading-relaxed max-w-xs">AI-powered lead generation and cold outreach built specifically for freelancers and indie agencies.</p>
+              <p className="text-xs text-white/40 leading-relaxed max-w-xs">AI-powered lead generation and cold outreach built for freelancers, sales reps, and indie agencies.</p>
             </div>
             <div>
               <div className="text-xs font-semibold text-white/80 mb-3 uppercase tracking-wider">Product</div>

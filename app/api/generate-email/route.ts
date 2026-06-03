@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { incrementEmails } from "@/lib/usage";
 
 export async function POST(req: NextRequest) {
   try {
-    const { lead, yourSkill, yourName, geminiKey } = await req.json();
-    const apiKey = geminiKey || "";
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ subject: "Error", email: "Unauthorized" }, { status: 401 });
+
+    const { lead, yourSkill, yourName } = await req.json();
+    const apiKey = process.env.GROQ_API_KEY || "";
 
     if (!apiKey) {
-      return NextResponse.json({ subject: "Error", email: "No API key. Go to Settings." }, { status: 400 });
+      return NextResponse.json({ subject: "Error", email: "Server not configured." }, { status: 500 });
     }
 
     const senderName = yourName || "Alex";
@@ -42,13 +47,15 @@ Return ONLY: {"subject":"under 8 words","email":"body only"}`,
     if (!res.ok) {
       const err = await res.text();
       console.error("Groq email error:", res.status, err);
-      return NextResponse.json({ subject: "Error", email: "API error. Check your key." }, { status: 400 });
+      return NextResponse.json({ subject: "Error", email: "API error." }, { status: 400 });
     }
 
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || "{}";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const result = jsonMatch ? JSON.parse(jsonMatch[0]) : { subject: "Quick question", email: text };
+
+    await incrementEmails(userId, 1);
 
     return NextResponse.json(result);
   } catch (err) {

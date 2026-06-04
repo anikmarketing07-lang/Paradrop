@@ -297,7 +297,7 @@ function AppDashboardContent() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm text-white">{lead.name}</div>
-                    <div className="text-xs text-white/40">{lead.role} Â· {lead.company}</div>
+                    <div className="text-xs text-white/40">{lead.role} · {lead.company}</div>
                   </div>
                   <div className="hidden md:block text-xs text-white/30">{lead.location}</div>
                   <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">

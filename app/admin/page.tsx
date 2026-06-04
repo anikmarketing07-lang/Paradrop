@@ -103,7 +103,7 @@ export default function AdminPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-sm text-white">{p.userName}</span>
                     <span className="text-[10px] uppercase tracking-wider font-bold text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded-full">
-                      {p.plan} Â· {p.interval}
+                      {p.plan} · {p.interval}
                     </span>
                   </div>
                   <div className="text-xs text-white/40">{p.email}</div>
@@ -112,7 +112,7 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-lg font-bold text-white">â‚¹{p.amount.toLocaleString("en-IN")}</div>
+                  <div className="text-lg font-bold text-white">₹{p.amount.toLocaleString("en-IN")}</div>
                   <div className="text-[10px] text-white/30">{new Date(p.submittedAt).toLocaleString()}</div>
                 </div>
                 <div className="flex gap-2 shrink-0">

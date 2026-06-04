@@ -237,7 +237,7 @@ export default function PricingPage() {
                   : "text-white/50 hover:text-white"
               }`}
             >
-              <CreditCard size={14} /> Instant <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-1.5 py-0.5 rounded">Card Â· UPI Â· Wallet</span>
+              <CreditCard size={14} /> Instant <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-1.5 py-0.5 rounded">Card · UPI · Wallet</span>
             </button>
             <button
               onClick={() => setPayMethod("upi")}
@@ -296,10 +296,10 @@ export default function PricingPage() {
                   <div className="text-sm font-medium text-white/60 mb-1">{p.name}</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     {p.basePrice === 0 ? (
-                      <span className="text-5xl font-bold text-white">â‚¹0</span>
+                      <span className="text-5xl font-bold text-white">₹0</span>
                     ) : (
                       <>
-                        <span className="text-5xl font-bold text-white">â‚¹{price.totalINR.toLocaleString("en-IN")}</span>
+                        <span className="text-5xl font-bold text-white">₹{price.totalINR.toLocaleString("en-IN")}</span>
                         <span className="text-white/40 text-sm">/{interval === "monthly" ? "mo" : interval === "quarterly" ? "3mo" : "yr"}</span>
                       </>
                     )}
@@ -308,7 +308,7 @@ export default function PricingPage() {
                     {p.basePrice === 0
                       ? "Free forever, no card needed."
                       : isUpi
-                      ? `Manual UPI Â· pay then submit txn ID`
+                      ? `Manual UPI · pay then submit txn ID`
                       : `One-click via UPI, card, wallet, or netbanking`}
                   </p>
                 </div>
@@ -338,7 +338,7 @@ export default function PricingPage() {
                         : "border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/20 hover:bg-white/[0.05]"
                     }`}
                   >
-                    Pay â‚¹{price.totalINR.toLocaleString("en-IN")} via UPI
+                    Pay ₹{price.totalINR.toLocaleString("en-IN")} via UPI
                   </button>
                 ) : (
                   <button
@@ -351,7 +351,7 @@ export default function PricingPage() {
                     } disabled:opacity-50`}
                   >
                     {loading === p.stripePlan ? <Loader2 size={14} className="animate-spin" /> : null}
-                    Pay â‚¹{price.totalINR.toLocaleString("en-IN")}
+                    Pay ₹{price.totalINR.toLocaleString("en-IN")}
                   </button>
                 )}
               </div>
@@ -462,9 +462,9 @@ function UpiModal({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <div className="text-xs text-sky-400 font-semibold uppercase tracking-wider mb-1">
-                  {data.plan.name} Â· {intervalLabel(interval)}
+                  {data.plan.name} · {intervalLabel(interval)}
                 </div>
-                <h2 className="text-2xl font-bold">Pay â‚¹{amount.toLocaleString("en-IN")}</h2>
+                <h2 className="text-2xl font-bold">Pay ₹{amount.toLocaleString("en-IN")}</h2>
               </div>
               <button onClick={onClose} className="text-white/40 hover:text-white text-2xl">Ã—</button>
             </div>
@@ -475,7 +475,7 @@ function UpiModal({
 
             <div className="text-center mb-4">
               <p className="text-xs text-white/40 mb-1">Scan with any UPI app</p>
-              <p className="text-xs text-white/40">GPay Â· PhonePe Â· Paytm Â· BHIM Â· Slice</p>
+              <p className="text-xs text-white/40">GPay · PhonePe · Paytm · BHIM · Slice</p>
             </div>
 
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-lg p-3 mb-4 space-y-1">
@@ -489,7 +489,7 @@ function UpiModal({
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-white/40">Amount</span>
-                <span className="text-white font-semibold">â‚¹{amount.toLocaleString("en-IN")} (fixed)</span>
+                <span className="text-white font-semibold">₹{amount.toLocaleString("en-IN")} (fixed)</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-white/40">Note</span>

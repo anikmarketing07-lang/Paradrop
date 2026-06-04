@@ -219,7 +219,7 @@ export default function Home() {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-600/10 border border-sky-600/30 text-sky-300 text-xs font-medium mb-8 fade-up">
           <Sparkles size={12} className="text-cyan-400" />
           <span className="shimmer-text font-semibold">New:</span>
-          AI-personalized outreach for freelancers Â· 2,400+ freelancers & sales reps
+          AI-personalized outreach for freelancers · 2,400+ freelancers & sales reps
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-8 fade-up-delay-1">
@@ -459,7 +459,7 @@ export default function Home() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-white truncate">{t.name}</div>
-                  <div className="text-xs text-white/40 truncate">{t.role} Â· {t.location}</div>
+                  <div className="text-xs text-white/40 truncate">{t.role} · {t.location}</div>
                 </div>
               </div>
             </div>
@@ -552,7 +552,7 @@ export default function Home() {
             Get started — it&apos;s free
             <ArrowRight size={18} />
           </Link>
-          <p className="text-white/20 text-xs mt-4">No credit card Â· Cancel anytime Â· 2,400+ freelancers using it</p>
+          <p className="text-white/20 text-xs mt-4">No credit card · Cancel anytime · 2,400+ freelancers using it</p>
         </div>
       </section>
 

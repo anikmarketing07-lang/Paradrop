@@ -39,10 +39,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#08080f] text-white">
+    <div className="min-h-screen bg-[#0b1220] text-white">
       <nav className="border-b border-white/[0.06] px-6 py-3 flex items-center justify-between max-w-3xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-sky-600 flex items-center justify-center">
             <Zap size={12} className="text-white" fill="white" />
           </div>
           <span className="font-bold text-sm">LeadDrop</span>
@@ -61,7 +61,7 @@ export default function SettingsPage() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Key size={14} className="text-violet-400" />
+                <Key size={14} className="text-sky-400" />
                 <span className="font-semibold text-sm">Groq API Key</span>
                 <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">FREE</span>
                 {status === "ok" && <span className="flex items-center gap-1 text-xs text-emerald-400"><CheckCircle size={10} /> Connected</span>}
@@ -69,7 +69,7 @@ export default function SettingsPage() {
               </div>
               <p className="text-xs text-white/40">Powers lead generation + AI email writing. 100% free — works in India.</p>
             </div>
-            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors shrink-0">
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-sky-400 hover:text-sky-300 transition-colors shrink-0">
               Get free key <ExternalLink size={10} />
             </a>
           </div>
@@ -79,7 +79,7 @@ export default function SettingsPage() {
               value={geminiKey}
               onChange={(e) => setGeminiKey(e.target.value)}
               placeholder="Paste your Gemini API key (AIza...)..."
-              className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-violet-600/50 transition-colors font-mono"
+              className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors font-mono"
             />
             <button
               onClick={testGemini}
@@ -90,15 +90,15 @@ export default function SettingsPage() {
             </button>
           </div>
           <div className="mt-3 bg-white/[0.03] rounded-lg p-3 text-xs text-white/30">
-            <span className="text-white/50 font-medium">How to get it:</span> console.groq.com → Sign up free → API Keys → Create key → Copy
+            <span className="text-white/50 font-medium">How to get it:</span> console.groq.com â†’ Sign up free â†’ API Keys â†’ Create key â†’ Copy
           </div>
         </div>
 
         <button
           onClick={save}
-          className="w-full bg-violet-600 hover:bg-violet-500 text-white py-3 rounded-lg font-semibold text-sm transition-all"
+          className="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-lg font-semibold text-sm transition-all"
         >
-          {saved ? "✓ Saved!" : "Save API key"}
+          {saved ? "âœ“ Saved!" : "Save API key"}
         </button>
 
         <p className="text-center text-xs text-white/20 mt-4">

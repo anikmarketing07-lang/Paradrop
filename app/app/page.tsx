@@ -42,7 +42,7 @@ export default function AppDashboard() {
 
   if (!isLoaded || !isSignedIn) {
     return (
-      <div className="min-h-screen bg-[#08080f] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0b1220] flex items-center justify-center">
         <div className="text-white/40 text-sm">Loading...</div>
       </div>
     );
@@ -139,11 +139,11 @@ function AppDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#08080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0b1220] text-white flex flex-col">
       {/* Top bar */}
-      <nav className="border-b border-white/[0.06] bg-[#08080f]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
+      <nav className="border-b border-white/[0.06] bg-[#0b1220]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-sky-600 flex items-center justify-center">
             <Zap size={12} className="text-white" fill="white" />
           </div>
           <span className="font-bold text-sm">LeadDrop</span>
@@ -155,7 +155,7 @@ function AppDashboardContent() {
               onClick={() => setActiveTab(tab)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${
                 activeTab === tab
-                  ? "bg-violet-600 text-white"
+                  ? "bg-sky-600 text-white"
                   : "text-white/40 hover:text-white"
               }`}
             >
@@ -170,14 +170,14 @@ function AppDashboardContent() {
               <span className="text-white/30">/</span>
               <span>{usage.limit === Infinity ? "∞" : usage.limit}</span>
               <span className="text-white/30">leads</span>
-              <span className="text-[10px] uppercase tracking-wider text-violet-400 font-bold ml-1">{usage.plan}</span>
+              <span className="text-[10px] uppercase tracking-wider text-sky-400 font-bold ml-1">{usage.plan}</span>
             </div>
           )}
           <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
             <BarChart2 size={13} /> Analytics
           </Link>
           {usage?.plan === "free" && (
-            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-violet-600/10 border border-violet-600/20 text-violet-400 hover:bg-violet-600/20 px-2.5 py-1.5 rounded-lg transition-colors">
+            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-sky-600/10 border border-sky-600/20 text-sky-400 hover:bg-sky-600/20 px-2.5 py-1.5 rounded-lg transition-colors">
               <Crown size={12} /> Upgrade
             </Link>
           )}
@@ -205,7 +205,7 @@ function AppDashboardContent() {
                     value={yourName}
                     onChange={(e) => setYourName(e.target.value)}
                     placeholder="Alex Johnson"
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-violet-600/50 transition-colors"
+                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -214,7 +214,7 @@ function AppDashboardContent() {
                     value={yourSkill}
                     onChange={(e) => setYourSkill(e.target.value)}
                     placeholder="React developer, Brand designer..."
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-violet-600/50 transition-colors"
+                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
                   />
                 </div>
               </div>
@@ -230,7 +230,7 @@ function AppDashboardContent() {
                     onClick={() => { setNiche(n); setCustomNiche(""); }}
                     className={`text-left px-3 py-2.5 rounded-lg text-xs transition-all border ${
                       niche === n && !customNiche
-                        ? "bg-violet-600/20 border-violet-600/40 text-violet-300"
+                        ? "bg-sky-600/20 border-sky-600/40 text-sky-300"
                         : "bg-white/[0.03] border-white/[0.06] text-white/50 hover:text-white hover:border-white/[0.12]"
                     }`}
                   >
@@ -242,14 +242,14 @@ function AppDashboardContent() {
                 value={customNiche}
                 onChange={(e) => { setCustomNiche(e.target.value); setNiche(""); }}
                 placeholder="Or type a custom niche..."
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-violet-600/50 transition-colors"
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
               />
             </div>
 
             <button
               onClick={findLeads}
               disabled={loading || !selectedNiche}
-              className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-violet-600/30"
+              className="w-full flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-sky-600/30"
             >
               {loading ? (
                 <><Loader2 size={16} className="animate-spin" /> Finding leads...</>
@@ -271,7 +271,7 @@ function AppDashboardContent() {
               <button
                 onClick={generateAllEmails}
                 disabled={generatingAll || selectedLeads.length === 0}
-                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 {generatingAll ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
                 Generate {selectedLeads.length} emails
@@ -290,14 +290,14 @@ function AppDashboardContent() {
                     type="checkbox"
                     checked={lead.selected}
                     onChange={() => toggleLead(lead.id)}
-                    className="w-4 h-4 accent-violet-600 cursor-pointer"
+                    className="w-4 h-4 accent-sky-600 cursor-pointer"
                   />
-                  <div className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-600/30 flex items-center justify-center text-xs font-bold text-violet-300 shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300 shrink-0">
                     {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm text-white">{lead.name}</div>
-                    <div className="text-xs text-white/40">{lead.role} · {lead.company}</div>
+                    <div className="text-xs text-white/40">{lead.role} Â· {lead.company}</div>
                   </div>
                   <div className="hidden md:block text-xs text-white/30">{lead.location}</div>
                   <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
@@ -307,11 +307,11 @@ function AppDashboardContent() {
                   <button
                     onClick={() => generateEmail(lead.id)}
                     disabled={lead.status === "generating" || lead.status === "sent"}
-                    className="text-xs text-violet-400 hover:text-violet-300 disabled:opacity-40 shrink-0 transition-colors"
+                    className="text-xs text-sky-400 hover:text-sky-300 disabled:opacity-40 shrink-0 transition-colors"
                   >
                     {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
-                     lead.status === "done" ? "✓ Ready" :
-                     lead.status === "sent" ? "✓ Sent" : "Generate"}
+                     lead.status === "done" ? "âœ“ Ready" :
+                     lead.status === "sent" ? "âœ“ Sent" : "Generate"}
                   </button>
                 </div>
               ))}
@@ -338,7 +338,7 @@ function AppDashboardContent() {
                   <div key={lead.id} className="gradient-border p-5">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-600/30 flex items-center justify-center text-xs font-bold text-violet-300">
+                        <div className="w-8 h-8 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300">
                           {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                         </div>
                         <div>
@@ -357,7 +357,7 @@ function AppDashboardContent() {
                             markSent(lead.id);
                           }}
                           disabled={!lead.generatedEmail || lead.status === "generating"}
-                          className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                          className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                         >
                           <Send size={12} />
                           Send via Gmail
@@ -381,9 +381,9 @@ function AppDashboardContent() {
                       <div className="text-center py-4">
                         <button
                           onClick={() => generateEmail(lead.id)}
-                          className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                          className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
                         >
-                          Click to generate email →
+                          Click to generate email â†’
                         </button>
                       </div>
                     )}

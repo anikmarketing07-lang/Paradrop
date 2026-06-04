@@ -175,7 +175,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative">
       {/* Aurora Background */}
-      <div className="fixed inset-0 -z-10 bg-[#050509]">
+      <div className="fixed inset-0 -z-10 bg-[#080f1c]">
         <div className="grid-bg" />
         <div className="aurora-bg">
           <div className="aurora-blob aurora-blob-1" />
@@ -185,10 +185,10 @@ export default function Home() {
       </div>
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#050509]/70 backdrop-blur-2xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#080f1c]/70 backdrop-blur-2xl">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center glow-soft">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-500 flex items-center justify-center glow-soft">
               <Zap size={15} className="text-white" fill="white" />
             </div>
             <span className="font-bold text-lg tracking-tight">LeadDrop</span>
@@ -216,10 +216,10 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-24 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-600/10 border border-violet-600/30 text-violet-300 text-xs font-medium mb-8 fade-up">
-          <Sparkles size={12} className="text-fuchsia-400" />
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-600/10 border border-sky-600/30 text-sky-300 text-xs font-medium mb-8 fade-up">
+          <Sparkles size={12} className="text-cyan-400" />
           <span className="shimmer-text font-semibold">New:</span>
-          AI-personalized outreach for freelancers · 2,400+ freelancers & sales reps
+          AI-personalized outreach for freelancers Â· 2,400+ freelancers & sales reps
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-8 fade-up-delay-1">
@@ -256,7 +256,7 @@ export default function Home() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06] backdrop-blur-xl">
           {stats.map((s) => (
-            <div key={s.label} className="bg-[#050509]/80 px-6 py-7 text-center">
+            <div key={s.label} className="bg-[#080f1c]/80 px-6 py-7 text-center">
               <div className="text-3xl md:text-4xl font-bold gradient-text-violet mb-1">{s.value}</div>
               <div className="text-sm text-white/40">{s.label}</div>
             </div>
@@ -283,11 +283,11 @@ export default function Home() {
                 <div className="text-xs text-white/40 mb-3">Search leads</div>
                 <div className="space-y-2">
                   {["Shopify agencies", "SaaS startups", "Marketing agencies", "E-commerce"].map((t) => (
-                    <div key={t} className="text-xs bg-gradient-to-r from-violet-600/15 to-fuchsia-600/10 border border-violet-600/20 rounded-md px-2 py-1.5 text-violet-200">{t}</div>
+                    <div key={t} className="text-xs bg-gradient-to-r from-sky-600/15 to-cyan-600/10 border border-sky-600/20 rounded-md px-2 py-1.5 text-sky-200">{t}</div>
                   ))}
                 </div>
                 <div className="mt-4 btn-gradient rounded-lg py-2 text-center text-xs font-medium text-white">
-                  Find 20 leads →
+                  Find 20 leads â†’
                 </div>
               </div>
               <div className="col-span-2 bg-white/[0.03] rounded-xl p-4 border border-white/[0.06]">
@@ -307,7 +307,7 @@ export default function Home() {
                         <div className="text-xs font-medium text-white">{l.name}</div>
                         <div className="text-xs text-white/40">{l.role}</div>
                       </div>
-                      <div className="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">✓ Verified</div>
+                      <div className="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">âœ“ Verified</div>
                     </div>
                   ))}
                 </div>
@@ -315,7 +315,7 @@ export default function Home() {
             </div>
             <div className="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06]">
               <div className="text-xs text-white/40 mb-2 flex items-center gap-2">
-                <Sparkles size={11} className="text-fuchsia-400" />
+                <Sparkles size={11} className="text-cyan-400" />
                 AI-generated email for James Carter
               </div>
               <div className="text-xs text-white/70 leading-relaxed">
@@ -323,7 +323,7 @@ export default function Home() {
                 Hi James, noticed Pixel Studio recently expanded into mobile — congrats on the growth. I help design-focused agencies like yours build faster with React. Worked with 3 similar studios last quarter, cut their dev time by 40%. Worth a 15-min call?
               </div>
               <div className="mt-3 flex gap-2">
-                <div className="btn-gradient rounded-md px-3 py-1.5 text-xs font-medium text-white">Send to all 20 →</div>
+                <div className="btn-gradient rounded-md px-3 py-1.5 text-xs font-medium text-white">Send to all 20 â†’</div>
                 <div className="bg-white/[0.06] rounded-md px-3 py-1.5 text-xs text-white/50">Edit email</div>
               </div>
             </div>
@@ -346,7 +346,7 @@ export default function Home() {
       {/* How it works */}
       <section id="how-it-works" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-violet-400 text-sm font-medium mb-3 uppercase tracking-wider">How it works</div>
+          <div className="text-sky-400 text-sm font-medium mb-3 uppercase tracking-wider">How it works</div>
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">From zero to <span className="shimmer-text">50 warm leads</span><br />in under 10 minutes.</h2>
           <p className="text-white/50 max-w-xl mx-auto">No sales experience needed. No copywriting skills needed. Just you, your skill, and AI.</p>
         </div>
@@ -356,7 +356,7 @@ export default function Home() {
             <div key={step.step} className="gradient-border p-6 card-hover relative">
               <div className="text-6xl font-bold text-white/[0.04] absolute top-2 right-3">{step.step}</div>
               <div className="relative">
-                <div className="text-xs font-semibold text-violet-400 mb-3 tracking-wider uppercase">Step {i + 1}</div>
+                <div className="text-xs font-semibold text-sky-400 mb-3 tracking-wider uppercase">Step {i + 1}</div>
                 <h3 className="font-semibold text-white mb-2 text-lg">{step.title}</h3>
                 <p className="text-sm text-white/50 leading-relaxed">{step.desc}</p>
               </div>
@@ -368,19 +368,19 @@ export default function Home() {
       {/* Features */}
       <section id="features" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-fuchsia-400 text-sm font-medium mb-3 uppercase tracking-wider">Features</div>
+          <div className="text-cyan-400 text-sm font-medium mb-3 uppercase tracking-wider">Features</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Everything to land your<br />next client. <span className="shimmer-text">Nothing more.</span></h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((f, i) => (
             <div key={f.title} className="gradient-border p-6 card-hover group">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-600/30 to-fuchsia-600/20 border border-violet-600/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <f.icon size={18} className="text-violet-300" />
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-600/30 to-cyan-600/20 border border-sky-600/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <f.icon size={18} className="text-sky-300" />
                 </div>
                 <span className="text-[10px] font-bold text-white/20 tracking-widest uppercase">0{i + 1}</span>
               </div>
-              <div className="inline-block text-[10px] font-semibold text-fuchsia-300 bg-fuchsia-400/10 border border-fuchsia-400/20 px-2 py-0.5 rounded-full mb-3 tracking-wider uppercase">
+              <div className="inline-block text-[10px] font-semibold text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-full mb-3 tracking-wider uppercase">
                 {f.tag}
               </div>
               <h3 className="font-semibold text-white mb-2 text-[15px]">{f.title}</h3>
@@ -403,7 +403,7 @@ export default function Home() {
                 <th className="text-left py-4 font-medium text-white/40 pl-4"></th>
                 <th className="text-center py-4 font-bold text-white">
                   <div className="flex items-center justify-center gap-1.5">
-                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center">
                       <Zap size={10} className="text-white" fill="white" />
                     </div>
                     LeadDrop
@@ -417,11 +417,11 @@ export default function Home() {
               {[
                 ["Monthly cost", "$19", "$199+", "$149+"],
                 ["AI personalization", "Built-in", "Extra $$", "Extra $$"],
-                ["Lead search + outreach in one", "✓", "Need both tools", "Need both tools"],
-                ["For freelancers + sales reps", "✓", "Enterprise only", "Enterprise only"],
+                ["Lead search + outreach in one", "âœ“", "Need both tools", "Need both tools"],
+                ["For freelancers + sales reps", "âœ“", "Enterprise only", "Enterprise only"],
                 ["Setup time", "2 min", "30 min", "20 min"],
                 ["Free tier", "20 leads/mo", "Trial only", "25 searches"],
-                ["Verified emails", "✓", "✓", "✓"],
+                ["Verified emails", "âœ“", "âœ“", "âœ“"],
               ].map(([label, ld, apl, hn]) => (
                 <tr key={label} className="border-b border-white/[0.04] last:border-0">
                   <td className="py-4 pl-4 text-white/70">{label}</td>
@@ -438,7 +438,7 @@ export default function Home() {
       {/* Testimonials */}
       <section id="testimonials" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-pink-400 text-sm font-medium mb-3 uppercase tracking-wider">Customers</div>
+          <div className="text-indigo-400 text-sm font-medium mb-3 uppercase tracking-wider">Customers</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Freelancers closing deals<br /><span className="shimmer-text">every single week.</span></h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -447,19 +447,19 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-amber-400 text-sm">★</span>
+                    <span key={i} className="text-amber-400 text-sm">â˜…</span>
                   ))}
                 </div>
                 <span className="text-xs font-bold gradient-text-violet">{t.closed} closed</span>
               </div>
               <p className="text-sm text-white/70 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
               <div className="flex items-center gap-3 pt-4 border-t border-white/[0.05]">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500/40 to-fuchsia-500/40 border border-violet-500/30 flex items-center justify-center text-xs font-bold text-white">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-500/40 to-cyan-500/40 border border-sky-500/30 flex items-center justify-center text-xs font-bold text-white">
                   {t.avatar}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-white truncate">{t.name}</div>
-                  <div className="text-xs text-white/40 truncate">{t.role} · {t.location}</div>
+                  <div className="text-xs text-white/40 truncate">{t.role} Â· {t.location}</div>
                 </div>
               </div>
             </div>
@@ -470,7 +470,7 @@ export default function Home() {
       {/* Pricing */}
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-violet-400 text-sm font-medium mb-3 uppercase tracking-wider">Pricing</div>
+          <div className="text-sky-400 text-sm font-medium mb-3 uppercase tracking-wider">Pricing</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Start free. <span className="shimmer-text">Scale when ready.</span></h2>
           <p className="text-white/40 mt-4">No credit card required. Cancel anytime.</p>
         </div>
@@ -496,7 +496,7 @@ export default function Home() {
               <div className="space-y-3 mb-8">
                 {p.features.map((f) => (
                   <div key={f} className="flex items-center gap-2 text-sm text-white/70">
-                    <CheckCircle2 size={14} className="text-violet-400 shrink-0" />
+                    <CheckCircle2 size={14} className="text-sky-400 shrink-0" />
                     {f}
                   </div>
                 ))}
@@ -519,7 +519,7 @@ export default function Home() {
       {/* FAQ */}
       <section id="faq" className="max-w-3xl mx-auto px-6 py-20">
         <div className="text-center mb-12">
-          <div className="text-fuchsia-400 text-sm font-medium mb-3 uppercase tracking-wider">FAQ</div>
+          <div className="text-cyan-400 text-sm font-medium mb-3 uppercase tracking-wider">FAQ</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Questions, <span className="shimmer-text">answered.</span></h2>
         </div>
         <div className="space-y-3">
@@ -527,7 +527,7 @@ export default function Home() {
             <details key={f.q} className="gradient-border p-5 card-hover group cursor-pointer">
               <summary className="flex items-center justify-between text-white font-medium text-sm list-none">
                 {f.q}
-                <span className="text-violet-400 text-lg group-open:rotate-45 transition-transform">+</span>
+                <span className="text-sky-400 text-lg group-open:rotate-45 transition-transform">+</span>
               </summary>
               <p className="text-sm text-white/50 leading-relaxed mt-4 pt-4 border-t border-white/[0.05]">{f.a}</p>
             </details>
@@ -552,7 +552,7 @@ export default function Home() {
             Get started — it&apos;s free
             <ArrowRight size={18} />
           </Link>
-          <p className="text-white/20 text-xs mt-4">No credit card · Cancel anytime · 2,400+ freelancers using it</p>
+          <p className="text-white/20 text-xs mt-4">No credit card Â· Cancel anytime Â· 2,400+ freelancers using it</p>
         </div>
       </section>
 
@@ -562,7 +562,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-500 flex items-center justify-center">
                   <Zap size={13} className="text-white" fill="white" />
                 </div>
                 <span className="font-bold text-sm">LeadDrop</span>
@@ -595,8 +595,8 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/[0.05]">
-            <p className="text-white/20 text-xs">© 2026 LeadDrop. Built to help freelancers win.</p>
-            <p className="text-white/20 text-xs">Made with <span className="text-violet-400">♦</span> for indie hackers worldwide</p>
+            <p className="text-white/20 text-xs">Â© 2026 LeadDrop. Built to help freelancers win.</p>
+            <p className="text-white/20 text-xs">Made with <span className="text-sky-400">â™¦</span> for indie hackers worldwide</p>
           </div>
         </div>
       </footer>

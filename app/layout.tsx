@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       signUpFallbackRedirectUrl="/app"
     >
       <html lang="en" className={`${geist.variable} h-full`}>
-        <body className="min-h-full bg-[#08080f] text-white antialiased">{children}</body>
+        <body className="min-h-full bg-[#0b1220] text-white antialiased">{children}</body>
       </html>
     </ClerkProvider>
   );

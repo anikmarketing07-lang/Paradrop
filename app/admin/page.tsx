@@ -60,7 +60,7 @@ export default function AdminPage() {
 
   if (forbidden) {
     return (
-      <div className="min-h-screen bg-[#050509] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#080f1c] text-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Access denied</h1>
           <p className="text-white/40 text-sm">Admin only.</p>
@@ -70,10 +70,10 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050509] text-white">
+    <div className="min-h-screen bg-[#080f1c] text-white">
       <nav className="border-b border-white/[0.06] px-6 py-3 flex items-center justify-between max-w-5xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center">
             <Zap size={12} className="text-white" fill="white" />
           </div>
           <span className="font-bold text-sm">LeadDrop Admin</span>
@@ -102,8 +102,8 @@ export default function AdminPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-sm text-white">{p.userName}</span>
-                    <span className="text-[10px] uppercase tracking-wider font-bold text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-full">
-                      {p.plan} · {p.interval}
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded-full">
+                      {p.plan} Â· {p.interval}
                     </span>
                   </div>
                   <div className="text-xs text-white/40">{p.email}</div>
@@ -112,7 +112,7 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-lg font-bold text-white">₹{p.amount.toLocaleString("en-IN")}</div>
+                  <div className="text-lg font-bold text-white">â‚¹{p.amount.toLocaleString("en-IN")}</div>
                   <div className="text-[10px] text-white/30">{new Date(p.submittedAt).toLocaleString()}</div>
                 </div>
                 <div className="flex gap-2 shrink-0">

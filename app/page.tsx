@@ -71,8 +71,8 @@ const pricing = [
     period: "per month",
     desc: "For freelancers serious about growth.",
     features: ["500 leads / month", "AI email writing", "Bulk send (200/day)", "Full tracking + analytics", "Follow-up sequences", "Priority support"],
-    cta: "Start Pro",
-    href: "/app",
+    cta: "Get Pro",
+    href: "/pricing",
     highlight: true,
   },
   {
@@ -81,8 +81,8 @@ const pricing = [
     period: "per month",
     desc: "For agencies & power users.",
     features: ["Unlimited leads", "Everything in Pro", "Multiple Gmail accounts", "Team access (3 seats)", "API access", "Dedicated support"],
-    cta: "Start Agency",
-    href: "/app",
+    cta: "Get Agency",
+    href: "/pricing",
     highlight: false,
   },
 ];

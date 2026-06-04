@@ -82,7 +82,7 @@ function intervalLabel(interval: Interval) {
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [interval, setInterval] = useState<Interval>("monthly");
-  const [payMethod, setPayMethod] = useState<PayMethod>("card");
+  const [payMethod, setPayMethod] = useState<PayMethod>("upi");
   const [showUpiModal, setShowUpiModal] = useState<{ plan: Plan; price: ReturnType<typeof calculatePrice> } | null>(null);
 
   async function handleCardCheckout(plan: string) {
@@ -94,11 +94,30 @@ export default function PricingPage() {
         body: JSON.stringify({ plan, interval }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else if (res.status === 401) window.location.href = "/sign-in";
-      else alert(data.error || "Failed to start checkout");
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      if (res.status === 401) {
+        window.location.href = "/sign-in";
+        return;
+      }
+      // Card path not configured — switch to UPI automatically
+      const planObj = plans.find((p) => p.stripePlan === plan);
+      if (planObj) {
+        setPayMethod("upi");
+        openUpiModal(planObj);
+      } else {
+        alert(data.error || "Card payments unavailable. Please use UPI.");
+      }
     } catch {
-      alert("Something went wrong. Try again.");
+      const planObj = plans.find((p) => p.stripePlan === plan);
+      if (planObj) {
+        setPayMethod("upi");
+        openUpiModal(planObj);
+      } else {
+        alert("Card payments unavailable. Please use UPI.");
+      }
     } finally {
       setLoading(null);
     }

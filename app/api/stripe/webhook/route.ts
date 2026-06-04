@@ -3,7 +3,10 @@ import Stripe from "stripe";
 import { setUserPlan } from "@/lib/usage";
 
 export async function POST(req: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
+  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const body = await req.text();
   const sig = req.headers.get("stripe-signature")!;
 

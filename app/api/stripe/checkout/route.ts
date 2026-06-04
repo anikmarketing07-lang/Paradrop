@@ -16,7 +16,10 @@ const PRICE_MAP: Record<string, Record<string, string | undefined>> = {
 };
 
 export async function POST(req: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ error: "Card payments not configured. Please use UPI." }, { status: 503 });
+  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

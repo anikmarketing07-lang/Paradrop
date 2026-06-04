@@ -12,7 +12,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInForceRedirectUrl="/app"
+      signUpForceRedirectUrl="/app"
+      signInFallbackRedirectUrl="/app"
+      signUpFallbackRedirectUrl="/app"
+    >
       <html lang="en" className={`${geist.variable} h-full`}>
         <body className="min-h-full bg-[#08080f] text-white antialiased">{children}</body>
       </html>

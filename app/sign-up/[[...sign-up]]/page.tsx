@@ -14,6 +14,7 @@ export default function SignUpPage() {
           <p className="text-white/40 text-sm mt-2">Start free — 20 leads/month, no card needed</p>
         </div>
         <SignUp
+          forceRedirectUrl="/app"
           appearance={{
             variables: {
               colorPrimary: "#7c3aed",

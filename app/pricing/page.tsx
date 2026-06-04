@@ -7,6 +7,24 @@ import { Zap, ArrowLeft, Loader2, CheckCircle2, RefreshCw, CreditCard, Smartphon
 type Interval = "monthly" | "quarterly" | "yearly";
 type PayMethod = "card" | "upi";
 
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 const INTERVAL_LABELS: Record<Interval, string> = {
   monthly: "Monthly",
   quarterly: "3 months",
@@ -100,35 +118,76 @@ export default function PricingPage() {
     }
   }, []);
 
-  async function handleCardCheckout(plan: string) {
+  async function handleRazorpayCheckout(plan: string) {
     setLoading(plan);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      const orderRes = await fetch("/api/razorpay/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan, interval }),
       });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-      if (res.status === 401) {
+      const order = await orderRes.json();
+
+      if (orderRes.status === 401) {
         window.location.href = "/sign-in";
         return;
       }
-      // Card path not configured — offer UPI fallback
-      const planObj = plans.find((p) => p.stripePlan === plan);
-      if (planObj && confirm("Card payments are launching soon.\n\nWant to pay via UPI (India) instead?\n\nOr email hello@leaddrop.io to get notified.")) {
-        setPayMethod("upi");
-        openUpiModal(planObj);
+      if (orderRes.status === 503) {
+        // Razorpay not configured — fall back to manual UPI
+        const planObj = plans.find((p) => p.stripePlan === plan);
+        if (planObj) {
+          setPayMethod("upi");
+          openUpiModal(planObj);
+        }
+        return;
       }
-    } catch {
-      const planObj = plans.find((p) => p.stripePlan === plan);
-      if (planObj && confirm("Card payments are launching soon.\n\nWant to pay via UPI (India) instead?")) {
-        setPayMethod("upi");
-        openUpiModal(planObj);
+      if (!orderRes.ok || !order.orderId) {
+        alert(order.error || "Failed to create order. Try again.");
+        return;
       }
+
+      const scriptOK = await loadRazorpayScript();
+      if (!scriptOK || !window.Razorpay) {
+        alert("Could not load payment SDK. Check your internet connection.");
+        return;
+      }
+
+      const rzp = new window.Razorpay({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: "LeadDrop",
+        description: `${plan === "pro" ? "Pro" : "Agency"} plan (${interval})`,
+        order_id: order.orderId,
+        handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          const verifyRes = await fetch("/api/razorpay/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              plan,
+              interval,
+            }),
+          });
+          const verify = await verifyRes.json();
+          if (verifyRes.ok) {
+            window.location.href = "/app?upgraded=true";
+          } else {
+            alert(verify.error || "Payment verification failed. Contact support with your payment ID: " + response.razorpay_payment_id);
+          }
+        },
+        prefill: {},
+        theme: { color: "#7c3aed" },
+        modal: {
+          ondismiss: () => setLoading(null),
+        },
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Try again.");
     } finally {
       setLoading(null);
     }
@@ -178,7 +237,7 @@ export default function PricingPage() {
                   : "text-white/50 hover:text-white"
               }`}
             >
-              <CreditCard size={14} /> Card
+              <CreditCard size={14} /> Instant <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-1.5 py-0.5 rounded">Card · UPI · Wallet</span>
             </button>
             <button
               onClick={() => setPayMethod("upi")}
@@ -188,7 +247,7 @@ export default function PricingPage() {
                   : "text-white/50 hover:text-white"
               }`}
             >
-              <Smartphone size={14} /> UPI <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-1.5 py-0.5 rounded">India</span>
+              <Smartphone size={14} /> Manual UPI
             </button>
           </div>
         </div>
@@ -237,15 +296,11 @@ export default function PricingPage() {
                   <div className="text-sm font-medium text-white/60 mb-1">{p.name}</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     {p.basePrice === 0 ? (
-                      <span className="text-5xl font-bold text-white">{isUpi ? "₹0" : "$0"}</span>
-                    ) : isUpi ? (
-                      <>
-                        <span className="text-5xl font-bold text-white">₹{price.totalINR.toLocaleString("en-IN")}</span>
-                      </>
+                      <span className="text-5xl font-bold text-white">₹0</span>
                     ) : (
                       <>
-                        <span className="text-5xl font-bold text-white">${price.perMonthUSD.toFixed(price.perMonthUSD % 1 === 0 ? 0 : 2)}</span>
-                        <span className="text-white/40 text-sm">/mo</span>
+                        <span className="text-5xl font-bold text-white">₹{price.totalINR.toLocaleString("en-IN")}</span>
+                        <span className="text-white/40 text-sm">/{interval === "monthly" ? "mo" : interval === "quarterly" ? "3mo" : "yr"}</span>
                       </>
                     )}
                   </div>
@@ -253,10 +308,8 @@ export default function PricingPage() {
                     {p.basePrice === 0
                       ? "Free forever, no card needed."
                       : isUpi
-                      ? `One-time ${intervalLabel(interval)} payment via UPI`
-                      : interval === "monthly"
-                      ? `per month`
-                      : `per month, billed $${price.totalUSD.toFixed(0)} ${intervalLabel(interval)}`}
+                      ? `Manual UPI · pay then submit txn ID`
+                      : `One-click via UPI, card, wallet, or netbanking`}
                   </p>
                 </div>
 
@@ -289,7 +342,7 @@ export default function PricingPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => p.stripePlan && handleCardCheckout(p.stripePlan)}
+                    onClick={() => p.stripePlan && handleRazorpayCheckout(p.stripePlan)}
                     disabled={loading === p.stripePlan}
                     className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all ${
                       p.highlight
@@ -298,7 +351,7 @@ export default function PricingPage() {
                     } disabled:opacity-50`}
                   >
                     {loading === p.stripePlan ? <Loader2 size={14} className="animate-spin" /> : null}
-                    Upgrade to {p.name}
+                    Pay ₹{price.totalINR.toLocaleString("en-IN")}
                   </button>
                 )}
               </div>
@@ -306,17 +359,13 @@ export default function PricingPage() {
           })}
         </div>
 
-        {/* Auto-pay note */}
+        {/* Renewal note */}
         <div className="mt-10 max-w-2xl mx-auto gradient-border p-5 flex items-start gap-3">
           <RefreshCw size={16} className="text-violet-400 shrink-0 mt-0.5" />
           <div>
-            <div className="text-sm font-medium text-white mb-1">
-              {payMethod === "card" ? "Auto-renewal enabled by default" : "UPI: pay-per-cycle (manual renewal)"}
-            </div>
+            <div className="text-sm font-medium text-white mb-1">Pay-per-cycle (no auto-charge)</div>
             <p className="text-xs text-white/50 leading-relaxed">
-              {payMethod === "card"
-                ? "Card subscription auto-renews at the end of each billing cycle so you never lose access. Cancel anytime from your dashboard."
-                : "UPI is a one-time payment per cycle. We'll email you 3 days before expiry to renew. No auto-charge — pay only when you're ready."}
+              One-time payment per billing cycle. We&apos;ll email you 3 days before expiry to renew. No auto-charge — you&apos;re in control.
             </p>
           </div>
         </div>

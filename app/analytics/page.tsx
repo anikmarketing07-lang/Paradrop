@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Zap, TrendingUp, Mail, MousePointer, MessageSquare, ArrowUpRight, ArrowLeft } from "lucide-react";
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 
 // Mock data — replace with real DB queries once you have a database
 const mockStats = {
@@ -47,6 +48,19 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
 }
 
 export default function AnalyticsPage() {
+  return (
+    <>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+      <SignedIn>
+        <AnalyticsContent />
+      </SignedIn>
+    </>
+  );
+}
+
+function AnalyticsContent() {
   const [range, setRange] = useState<"7d" | "30d" | "all">("7d");
 
   return (

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown } from "lucide-react";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 
 type Lead = {
   id: string;
@@ -32,6 +32,19 @@ const niches = [
 ];
 
 export default function AppDashboard() {
+  return (
+    <>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+      <SignedIn>
+        <AppDashboardContent />
+      </SignedIn>
+    </>
+  );
+}
+
+function AppDashboardContent() {
   const [niche, setNiche] = useState("");
   const [customNiche, setCustomNiche] = useState("");
   const [leads, setLeads] = useState<Lead[]>([]);

@@ -367,11 +367,21 @@ function UpiModal({
           plan: data.plan.stripePlan,
           interval,
           amount,
-          txnId,
+          txnId: txnId.trim(),
         }),
       });
-      if (res.ok) setDone(true);
-      else alert("Failed to submit. Try again.");
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setDone(true);
+        return;
+      }
+      if (res.status === 401) {
+        if (confirm("Please sign in first. Go to sign-in?")) {
+          window.location.href = "/sign-in";
+        }
+        return;
+      }
+      alert(body.error || "Failed to submit. Try again.");
     } catch {
       alert("Network error. Try again.");
     } finally {

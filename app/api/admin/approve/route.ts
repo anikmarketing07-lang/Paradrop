@@ -20,18 +20,21 @@ export async function POST(req: NextRequest) {
     if (!payment) return NextResponse.json({ error: "Payment not found" }, { status: 404 });
 
     if (action === "approve") {
-      // Upgrade user + reset their counter so they get full quota
+      const months = payment.interval === "yearly" ? 12 : payment.interval === "quarterly" ? 3 : 1;
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + months * 30 * 24 * 60 * 60 * 1000);
       await setUserPlan(targetUserId, payment.plan as Plan);
       payment.status = "approved";
-      payment.approvedAt = new Date().toISOString();
-      // Reset usage on upgrade
+      payment.approvedAt = now.toISOString();
+      payment.expiresAt = expiresAt.toISOString();
       await client.users.updateUserMetadata(targetUserId, {
         publicMetadata: {
           ...meta,
           plan: payment.plan,
+          planExpiresAt: expiresAt.toISOString(),
           leadCount: 0,
           emailCount: 0,
-          lastReset: new Date().toISOString(),
+          lastReset: now.toISOString(),
           pendingUpiPayments: pending,
         },
       });

@@ -1,19 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-// UPI payments are MANUAL verification.
-// User submits txn ID → stored in their Clerk metadata for you to verify.
-// You manually check your UPI app, then upgrade them by setting plan in Clerk dashboard or via API.
+const USD_TO_INR = 84;
+const PLAN_USD: Record<string, number> = { pro: 19, agency: 49 };
+const INTERVAL_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
+const INTERVAL_DISCOUNT: Record<string, number> = { monthly: 0, quarterly: 10, yearly: 20 };
+
+function expectedInr(plan: string, interval: string): number | null {
+  const base = PLAN_USD[plan];
+  const months = INTERVAL_MONTHS[interval];
+  const discount = INTERVAL_DISCOUNT[interval];
+  if (!base || !months || discount === undefined) return null;
+  return Math.round(base * months * (1 - discount / 100) * USD_TO_INR);
+}
 
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId) {
+      return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
+    }
 
     const { plan, interval, amount, txnId } = await req.json();
 
-    if (!plan || !interval || !amount || !txnId) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    if (!plan || !interval || amount === undefined || !txnId) {
+      return NextResponse.json({ error: "Missing fields." }, { status: 400 });
+    }
+    if (!["pro", "agency"].includes(plan)) {
+      return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
+    }
+    if (!["monthly", "quarterly", "yearly"].includes(interval)) {
+      return NextResponse.json({ error: "Invalid interval." }, { status: 400 });
+    }
+    const txnTrimmed = String(txnId).trim();
+    if (txnTrimmed.length < 6) {
+      return NextResponse.json({ error: "Invalid transaction ID." }, { status: 400 });
+    }
+
+    const expected = expectedInr(plan, interval);
+    if (expected === null || Math.abs(Number(amount) - expected) > 1) {
+      return NextResponse.json({ error: `Amount mismatch. Expected ₹${expected}.` }, { status: 400 });
     }
 
     const client = await clerkClient();
@@ -21,11 +47,15 @@ export async function POST(req: NextRequest) {
     const meta = (user.publicMetadata || {}) as Record<string, unknown>;
     const pending = (meta.pendingUpiPayments || []) as Array<Record<string, unknown>>;
 
+    if (pending.some((p) => p.txnId === txnTrimmed && p.status === "pending_verification")) {
+      return NextResponse.json({ error: "Transaction ID already submitted." }, { status: 409 });
+    }
+
     pending.push({
       plan,
       interval,
-      amount,
-      txnId,
+      amount: expected,
+      txnId: txnTrimmed,
       submittedAt: new Date().toISOString(),
       status: "pending_verification",
       email: user.emailAddresses[0]?.emailAddress,
@@ -35,12 +65,11 @@ export async function POST(req: NextRequest) {
       publicMetadata: { ...meta, pendingUpiPayments: pending },
     });
 
-    // TODO: Send Telegram/Email notification to admin (you)
-    console.log(`[UPI PAYMENT] User ${userId} | ${plan} ${interval} | ₹${amount} | Txn: ${txnId}`);
+    console.log(`[UPI PAYMENT] User ${userId} | ${plan} ${interval} | INR ${expected} | Txn: ${txnTrimmed}`);
 
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Failed to submit payment" }, { status: 500 });
+    return NextResponse.json({ error: "Server error. Try again." }, { status: 500 });
   }
 }

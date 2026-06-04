@@ -12,10 +12,16 @@ export type Plan = keyof typeof PLAN_LIMITS;
 
 type UserMeta = {
   plan?: Plan;
+  planExpiresAt?: string;
   leadCount?: number;
   emailCount?: number;
   lastReset?: string;
 };
+
+function isExpired(expiresAt: string | undefined): boolean {
+  if (!expiresAt) return false;
+  return new Date(expiresAt).getTime() < Date.now();
+}
 
 function shouldReset(lastReset: string | undefined): boolean {
   if (!lastReset) return true;
@@ -34,7 +40,16 @@ function nextResetDate(lastReset: string | undefined): string {
 export async function getUserUsage(userId: string) {
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
-  const meta = (user.publicMetadata as UserMeta) || {};
+  let meta = (user.publicMetadata as UserMeta) || {};
+
+  // Auto-downgrade if paid plan expired
+  if (meta.plan && meta.plan !== "free" && isExpired(meta.planExpiresAt)) {
+    await client.users.updateUserMetadata(userId, {
+      publicMetadata: { ...meta, plan: "free", planExpiresAt: undefined },
+    });
+    meta = { ...meta, plan: "free", planExpiresAt: undefined };
+  }
+
   const plan: Plan = meta.plan || "free";
   const limit = PLAN_LIMITS[plan];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Zap, ArrowLeft, Loader2, CheckCircle2, RefreshCw, CreditCard, Smartphone } from "lucide-react";
 
@@ -85,6 +85,21 @@ export default function PricingPage() {
   const [payMethod, setPayMethod] = useState<PayMethod>("upi");
   const [showUpiModal, setShowUpiModal] = useState<{ plan: Plan; price: ReturnType<typeof calculatePrice> } | null>(null);
 
+  useEffect(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const lang = (typeof navigator !== "undefined" ? navigator.language : "") || "";
+      const isIndia =
+        tz === "Asia/Kolkata" ||
+        tz === "Asia/Calcutta" ||
+        lang.toLowerCase().endsWith("-in") ||
+        lang.toLowerCase().startsWith("hi");
+      setPayMethod(isIndia ? "upi" : "card");
+    } catch {
+      // fallback stays UPI
+    }
+  }, []);
+
   async function handleCardCheckout(plan: string) {
     setLoading(plan);
     try {
@@ -102,21 +117,17 @@ export default function PricingPage() {
         window.location.href = "/sign-in";
         return;
       }
-      // Card path not configured — switch to UPI automatically
+      // Card path not configured — offer UPI fallback
       const planObj = plans.find((p) => p.stripePlan === plan);
-      if (planObj) {
+      if (planObj && confirm("Card payments are launching soon.\n\nWant to pay via UPI (India) instead?\n\nOr email hello@leaddrop.io to get notified.")) {
         setPayMethod("upi");
         openUpiModal(planObj);
-      } else {
-        alert(data.error || "Card payments unavailable. Please use UPI.");
       }
     } catch {
       const planObj = plans.find((p) => p.stripePlan === plan);
-      if (planObj) {
+      if (planObj && confirm("Card payments are launching soon.\n\nWant to pay via UPI (India) instead?")) {
         setPayMethod("upi");
         openUpiModal(planObj);
-      } else {
-        alert("Card payments unavailable. Please use UPI.");
       }
     } finally {
       setLoading(null);

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Zap, TrendingUp, Mail, MousePointer, MessageSquare, ArrowUpRight, ArrowLeft } from "lucide-react";
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 // Mock data — replace with real DB queries once you have a database
 const mockStats = {
@@ -48,16 +48,23 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
 }
 
 export default function AnalyticsPage() {
-  return (
-    <>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-      <SignedIn>
-        <AnalyticsContent />
-      </SignedIn>
-    </>
-  );
+  const { isLoaded, isSignedIn } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      window.location.href = "/sign-in";
+    }
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-[#08080f] flex items-center justify-center">
+        <div className="text-white/40 text-sm">Loading...</div>
+      </div>
+    );
+  }
+
+  return <AnalyticsContent />;
 }
 
 function AnalyticsContent() {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown } from "lucide-react";
 import Link from "next/link";
-import { UserButton, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 
 type Lead = {
   id: string;
@@ -32,16 +32,23 @@ const niches = [
 ];
 
 export default function AppDashboard() {
-  return (
-    <>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-      <SignedIn>
-        <AppDashboardContent />
-      </SignedIn>
-    </>
-  );
+  const { isLoaded, isSignedIn } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      window.location.href = "/sign-in";
+    }
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-[#08080f] flex items-center justify-center">
+        <div className="text-white/40 text-sm">Loading...</div>
+      </div>
+    );
+  }
+
+  return <AppDashboardContent />;
 }
 
 function AppDashboardContent() {

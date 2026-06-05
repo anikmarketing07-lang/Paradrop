@@ -466,7 +466,7 @@ function UpiModal({
                 </div>
                 <h2 className="text-2xl font-bold">Pay ₹{amount.toLocaleString("en-IN")}</h2>
               </div>
-              <button onClick={onClose} className="text-white/40 hover:text-white text-2xl">Ã—</button>
+              <button onClick={onClose} className="text-white/40 hover:text-white text-2xl">×</button>
             </div>
 
             <div className="bg-white p-4 rounded-xl mb-4 flex justify-center">

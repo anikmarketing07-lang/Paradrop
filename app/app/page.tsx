@@ -160,7 +160,7 @@ function AppDashboardContent() {
       });
       const data = await res.json();
       setLeads((prev) => prev.map((l) =>
-        l.id === leadId ? { ...l, status: "done", generatedEmail: data.email, emailSubject: data.subject } : l
+        l.id === leadId ? { ...l, status: "done", generatedEmail: data.email, emailSubject: data.subject, generatedDM: data.dm } : l
       ));
     } catch {
       setLeads((prev) => prev.map((l) => l.id === leadId ? { ...l, status: "idle" } : l));
@@ -322,7 +322,7 @@ function AppDashboardContent() {
                 className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 {generatingAll ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                Generate {selectedLeads.length} emails
+                Generate {selectedLeads.length} messages
               </button>
             </div>
 

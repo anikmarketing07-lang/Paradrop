@@ -25,20 +25,22 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 400,
+        max_tokens: 500,
         temperature: 0.8,
         messages: [
           {
             role: "system",
-            content: "You write short human cold emails. Return ONLY valid JSON with keys 'subject' and 'email'. No markdown. No backticks.",
+            content: "You write short human cold outreach. Return ONLY valid JSON with keys 'subject', 'email', and 'dm'. No markdown. No backticks.",
           },
           {
             role: "user",
-            content: `Write a cold email from "${senderName}" (${skill}) to ${lead.name} (${lead.role} at ${lead.company}, ${lead.industry}).
+            content: `Write cold outreach from "${senderName}" (${skill}) to ${lead.name} (${lead.role} at ${lead.company}, ${lead.industry}).
 
-Rules: max 80 words, no generic openers, mention their role/company, one value prop, soft CTA (15-min call), no exclamation marks, sound human.
+Generate TWO versions:
+1. "email": full cold email, max 80 words, mention their role/company, one value prop, soft CTA (15-min call), no generic openers, no exclamation marks, human tone.
+2. "dm": ultra-short version for WhatsApp/Instagram DM — max 35 words, casual, one line hook + one ask. No subject line. Sound like a real person texting.
 
-Return ONLY: {"subject":"under 8 words","email":"body only"}`,
+Return ONLY: {"subject":"under 8 words","email":"body only","dm":"short message"}`,
           },
         ],
       }),

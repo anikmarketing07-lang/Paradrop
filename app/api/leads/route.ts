@@ -48,9 +48,16 @@ export async function POST(req: NextRequest) {
             content: `Generate 20 realistic B2B leads for freelancers targeting: "${niche}".
 
 Return ONLY a JSON array (no markdown, no backticks, no extra text):
-[{"id":"1","name":"Full Name","role":"CEO","company":"Company Name","email":"firstname.lastname@company.com","industry":"${niche}","location":"City, Country","verified":true}]
+[{"id":"1","name":"Full Name","role":"CEO","company":"Company Name","email":"firstname.lastname@company.com","phone":"+1234567890","whatsapp":"+1234567890","instagram":"username","facebook":"username","website":"company.com","address":"123 Main St, City","industry":"${niche}","location":"City, Country","verified":true}]
 
-Rules: 20 unique people, decision maker roles only (CEO/Founder/CMO/Director/VP), realistic names, real-sounding companies for ${niche}, mix of US/UK/India/Australia locations.`,
+Rules:
+- 20 unique people, decision maker roles only (CEO/Founder/CMO/Director/VP)
+- Realistic names, real-sounding companies for ${niche}
+- Mix of US/UK/India/Australia locations
+- phone + whatsapp in E.164 international format (+CountryCode + digits, NO spaces/dashes); whatsapp usually same as phone
+- instagram and facebook = plain handle/username only (no @, no URL)
+- website = bare domain (no https://)
+- address = realistic street + city for the location`,
           },
         ],
       }),

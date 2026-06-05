@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown } from "lucide-react";
+import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown, MessageCircle, Instagram, Facebook, Phone, MapPin, Globe } from "lucide-react";
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 
@@ -11,14 +11,44 @@ type Lead = {
   role: string;
   company: string;
   email: string;
+  phone?: string;
+  whatsapp?: string;
+  instagram?: string;
+  facebook?: string;
+  website?: string;
+  address?: string;
   industry: string;
   location: string;
   verified: boolean;
   selected: boolean;
   generatedEmail?: string;
   emailSubject?: string;
+  generatedDM?: string;
   status?: "idle" | "generating" | "done" | "sent";
 };
+
+function normalizePhone(p?: string): string {
+  if (!p) return "";
+  return p.replace(/[^\d+]/g, "");
+}
+
+function waLink(lead: Lead, message?: string): string | null {
+  const phone = normalizePhone(lead.whatsapp || lead.phone);
+  if (!phone) return null;
+  const clean = phone.startsWith("+") ? phone.slice(1) : phone;
+  const text = message || lead.generatedDM || lead.generatedEmail || "";
+  return `https://wa.me/${clean}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+}
+
+function igLink(lead: Lead): string | null {
+  if (!lead.instagram) return null;
+  return `https://instagram.com/${lead.instagram.replace(/^@/, "")}`;
+}
+
+function fbLink(lead: Lead): string | null {
+  if (!lead.facebook) return null;
+  return `https://facebook.com/${lead.facebook.replace(/^@/, "")}`;
+}
 
 const niches = [
   "Shopify agencies",
@@ -282,37 +312,81 @@ function AppDashboardContent() {
               {leads.map((lead) => (
                 <div
                   key={lead.id}
-                  className={`gradient-border p-4 flex items-center gap-4 transition-all ${
+                  className={`gradient-border p-4 transition-all ${
                     lead.selected ? "opacity-100" : "opacity-40"
                   }`}
                 >
-                  <input
-                    type="checkbox"
-                    checked={lead.selected}
-                    onChange={() => toggleLead(lead.id)}
-                    className="w-4 h-4 accent-sky-600 cursor-pointer"
-                  />
-                  <div className="w-9 h-9 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300 shrink-0">
-                    {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="checkbox"
+                      checked={lead.selected}
+                      onChange={() => toggleLead(lead.id)}
+                      className="w-4 h-4 accent-sky-600 cursor-pointer"
+                    />
+                    <div className="w-9 h-9 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300 shrink-0">
+                      {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-white">{lead.name}</div>
+                      <div className="text-xs text-white/40">{lead.role} · {lead.company}</div>
+                    </div>
+                    <div className="hidden md:block text-xs text-white/30">{lead.location}</div>
+                    <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
+                      <CheckCircle size={10} />
+                      Verified
+                    </div>
+                    <button
+                      onClick={() => generateEmail(lead.id)}
+                      disabled={lead.status === "generating" || lead.status === "sent"}
+                      className="text-xs text-sky-400 hover:text-sky-300 disabled:opacity-40 shrink-0 transition-colors"
+                    >
+                      {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
+                       lead.status === "done" ? "✓ Ready" :
+                       lead.status === "sent" ? "✓ Sent" : "Generate"}
+                    </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-white">{lead.name}</div>
-                    <div className="text-xs text-white/40">{lead.role} · {lead.company}</div>
+
+                  {/* Contact details + channel buttons */}
+                  <div className="mt-3 pt-3 border-t border-white/[0.04] flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+                    {lead.email && (
+                      <span className="flex items-center gap-1 text-white/50"><Mail size={11} className="text-sky-400" />{lead.email}</span>
+                    )}
+                    {lead.phone && (
+                      <span className="flex items-center gap-1 text-white/50"><Phone size={11} className="text-emerald-400" />{lead.phone}</span>
+                    )}
+                    {lead.website && (
+                      <a href={`https://${lead.website.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-white/50 hover:text-sky-300"><Globe size={11} className="text-sky-400" />{lead.website}</a>
+                    )}
+                    {lead.address && (
+                      <span className="flex items-center gap-1 text-white/50"><MapPin size={11} className="text-cyan-400" />{lead.address}</span>
+                    )}
+                    <div className="ml-auto flex items-center gap-1">
+                      {waLink(lead) && (
+                        <a href={waLink(lead)!} target="_blank" rel="noopener noreferrer" title="WhatsApp"
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-colors">
+                          <MessageCircle size={13} />
+                        </a>
+                      )}
+                      {igLink(lead) && (
+                        <a href={igLink(lead)!} target="_blank" rel="noopener noreferrer" title="Instagram"
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 transition-colors">
+                          <Instagram size={13} />
+                        </a>
+                      )}
+                      {fbLink(lead) && (
+                        <a href={fbLink(lead)!} target="_blank" rel="noopener noreferrer" title="Facebook"
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 transition-colors">
+                          <Facebook size={13} />
+                        </a>
+                      )}
+                      {lead.email && (
+                        <a href={`mailto:${lead.email}`} title="Email"
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 transition-colors">
+                          <Mail size={13} />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="hidden md:block text-xs text-white/30">{lead.location}</div>
-                  <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
-                    <CheckCircle size={10} />
-                    Verified
-                  </div>
-                  <button
-                    onClick={() => generateEmail(lead.id)}
-                    disabled={lead.status === "generating" || lead.status === "sent"}
-                    className="text-xs text-sky-400 hover:text-sky-300 disabled:opacity-40 shrink-0 transition-colors"
-                  >
-                    {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
-                     lead.status === "done" ? "âœ“ Ready" :
-                     lead.status === "sent" ? "âœ“ Sent" : "Generate"}
-                  </button>
                 </div>
               ))}
             </div>
@@ -351,17 +425,52 @@ function AppDashboardContent() {
                           <CheckCircle size={10} /> Sent
                         </span>
                       ) : (
-                        <button
-                          onClick={() => {
-                            window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
-                            markSent(lead.id);
-                          }}
-                          disabled={!lead.generatedEmail || lead.status === "generating"}
-                          className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                        >
-                          <Send size={12} />
-                          Send via Gmail
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          {waLink(lead) && (
+                            <a
+                              href={waLink(lead)!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => markSent(lead.id)}
+                              title="WhatsApp"
+                              className={`flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
+                            >
+                              <MessageCircle size={11} /> WhatsApp
+                            </a>
+                          )}
+                          {igLink(lead) && (
+                            <a
+                              href={igLink(lead)!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Instagram DM"
+                              className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                            >
+                              <Instagram size={11} /> Instagram
+                            </a>
+                          )}
+                          {fbLink(lead) && (
+                            <a
+                              href={fbLink(lead)!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Facebook"
+                              className="flex items-center gap-1 bg-sky-500 hover:bg-sky-400 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                            >
+                              <Facebook size={11} /> Facebook
+                            </a>
+                          )}
+                          <button
+                            onClick={() => {
+                              window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
+                              markSent(lead.id);
+                            }}
+                            disabled={!lead.generatedEmail || lead.status === "generating"}
+                            className="flex items-center gap-1 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                          >
+                            <Send size={11} /> Gmail
+                          </button>
+                        </div>
                       )}
                     </div>
 
@@ -383,7 +492,7 @@ function AppDashboardContent() {
                           onClick={() => generateEmail(lead.id)}
                           className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
                         >
-                          Click to generate email â†’
+                          Click to generate email →
                         </button>
                       </div>
                     )}

@@ -35,6 +35,9 @@ type Lead = {
   facebook?: string;
   website?: string;
   address?: string;
+  mapsUrl?: string;
+  rating?: number;
+  reviews?: number;
   industry: string;
   location: string;
   verified: boolean;
@@ -69,14 +72,14 @@ function fbLink(lead: Lead): string | null {
 }
 
 const niches = [
-  "Shopify agencies",
-  "SaaS startups (Series A)",
+  "Restaurants",
+  "Gyms & fitness studios",
+  "Dental clinics",
+  "Real estate agents",
+  "Beauty salons & spas",
   "Marketing agencies",
-  "E-commerce brands",
-  "Real estate companies",
-  "Healthcare startups",
-  "Web design studios",
-  "Fintech companies",
+  "Cafes & bakeries",
+  "Interior designers",
 ];
 
 export default function AppDashboard() {
@@ -102,6 +105,7 @@ export default function AppDashboard() {
 function AppDashboardContent() {
   const [niche, setNiche] = useState("");
   const [customNiche, setCustomNiche] = useState("");
+  const [city, setCity] = useState("");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
   const [generatingAll, setGeneratingAll] = useState(false);
@@ -124,7 +128,7 @@ function AppDashboardContent() {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ niche: selectedNiche }),
+        body: JSON.stringify({ niche: selectedNiche, location: city }),
       });
       const data = await res.json();
       if (data.limitReached) {
@@ -240,7 +244,7 @@ function AppDashboardContent() {
           <div className="max-w-2xl mx-auto">
             <div className="mb-8">
               <h1 className="text-2xl font-bold mb-1">Find your leads</h1>
-              <p className="text-white/40 text-sm">Tell us who to target. AI finds verified contacts.</p>
+              <p className="text-white/40 text-sm">Pick a business type + city. We pull real businesses with phone, website & address.</p>
             </div>
 
             {/* Your info */}
@@ -289,9 +293,23 @@ function AppDashboardContent() {
               <input
                 value={customNiche}
                 onChange={(e) => { setCustomNiche(e.target.value); setNiche(""); }}
-                placeholder="Or type a custom niche..."
+                placeholder="Or type a custom business type..."
                 className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
               />
+            </div>
+
+            {/* City / location */}
+            <div className="gradient-border p-5 mb-4">
+              <div className="text-xs text-white/40 uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
+                <MapPin size={12} className="text-cyan-400" /> City / area
+              </div>
+              <input
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Mumbai, Bangalore, Delhi NCR..."
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
+              />
+              <p className="text-[11px] text-white/30 mt-2">Add a city to find local businesses you can pitch.</p>
             </div>
 
             <button
@@ -300,9 +318,9 @@ function AppDashboardContent() {
               className="w-full flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-sky-600/30"
             >
               {loading ? (
-                <><Loader2 size={16} className="animate-spin" /> Finding leads...</>
+                <><Loader2 size={16} className="animate-spin" /> Finding businesses...</>
               ) : (
-                <><Search size={16} /> Find 20 verified leads</>
+                <><Search size={16} /> Find 20 real businesses</>
               )}
             </button>
           </div>
@@ -346,13 +364,24 @@ function AppDashboardContent() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm text-white">{lead.name}</div>
-                      <div className="text-xs text-white/40">{lead.role} · {lead.company}</div>
+                      <div className="text-xs text-white/40">{lead.role}</div>
                     </div>
-                    <div className="hidden md:block text-xs text-white/30">{lead.location}</div>
-                    <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
-                      <CheckCircle size={10} />
-                      Verified
-                    </div>
+                    {typeof lead.rating === "number" && (
+                      <div className="hidden md:flex items-center gap-1 text-xs text-amber-400 shrink-0">
+                        ★ {lead.rating}
+                        {lead.reviews ? <span className="text-white/30">({lead.reviews})</span> : null}
+                      </div>
+                    )}
+                    {lead.verified ? (
+                      <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
+                        <CheckCircle size={10} />
+                        Has phone
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-xs text-white/30 bg-white/[0.04] px-2 py-1 rounded-full shrink-0">
+                        No phone
+                      </div>
+                    )}
                     <button
                       onClick={() => generateEmail(lead.id)}
                       disabled={lead.status === "generating" || lead.status === "sent"}

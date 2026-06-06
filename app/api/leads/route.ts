@@ -2,25 +2,51 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserUsage, incrementLeads } from "@/lib/usage";
 
+type PlaceResult = {
+  displayName?: { text?: string };
+  formattedAddress?: string;
+  nationalPhoneNumber?: string;
+  internationalPhoneNumber?: string;
+  websiteUri?: string;
+  rating?: number;
+  userRatingCount?: number;
+  googleMapsUri?: string;
+  businessStatus?: string;
+  primaryTypeDisplayName?: { text?: string };
+};
+
+function toE164(intlPhone?: string): string {
+  if (!intlPhone) return "";
+  return intlPhone.replace(/[^\d+]/g, "");
+}
+
+function bareDomain(url?: string): string {
+  if (!url) return "";
+  return url.replace(/^https?:\/\//, "").replace(/\/$/, "").replace(/^www\./, "");
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ leads: [], error: "Unauthorized" }, { status: 401 });
 
-    const { niche } = await req.json();
-    const apiKey = process.env.GROQ_API_KEY || "";
+    const { niche, location } = await req.json();
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY || "";
 
     if (!apiKey) {
-      return NextResponse.json({ leads: [], error: "Server not configured." }, { status: 500 });
+      return NextResponse.json({ leads: [], error: "Lead source not configured. Contact support." }, { status: 503 });
+    }
+    if (!niche || !String(niche).trim()) {
+      return NextResponse.json({ leads: [], error: "Enter a niche or business type." }, { status: 400 });
     }
 
-    // Check usage limits
+    // Usage limits
     const usage = await getUserUsage(userId);
     if (usage.leadCount + 20 > usage.limit) {
       return NextResponse.json(
         {
           leads: [],
-          error: `Limit reached. ${usage.leadCount}/${usage.limit} leads used this month. Upgrade your plan.`,
+          error: `Limit reached. ${usage.leadCount}/${usage.limit} leads used this cycle. Upgrade your plan.`,
           limitReached: true,
           plan: usage.plan,
         },
@@ -28,53 +54,74 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // Build text query: "<niche> in <location>"
+    const query = location && String(location).trim()
+      ? `${niche} in ${location}`
+      : String(niche);
+
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": [
+          "places.displayName",
+          "places.formattedAddress",
+          "places.nationalPhoneNumber",
+          "places.internationalPhoneNumber",
+          "places.websiteUri",
+          "places.rating",
+          "places.userRatingCount",
+          "places.googleMapsUri",
+          "places.businessStatus",
+          "places.primaryTypeDisplayName",
+        ].join(","),
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        max_tokens: 2048,
-        temperature: 0.9,
-        messages: [
-          {
-            role: "system",
-            content: "You generate realistic B2B lead data. Return ONLY valid JSON arrays. No markdown. No explanation. No backticks.",
-          },
-          {
-            role: "user",
-            content: `Generate 20 realistic B2B leads for freelancers targeting: "${niche}".
-
-Return ONLY a JSON array (no markdown, no backticks, no extra text):
-[{"id":"1","name":"Full Name","role":"CEO","company":"Company Name","email":"firstname.lastname@company.com","phone":"+1234567890","whatsapp":"+1234567890","instagram":"username","facebook":"username","website":"company.com","address":"123 Main St, City","industry":"${niche}","location":"City, Country","verified":true}]
-
-Rules:
-- 20 unique people, decision maker roles only (CEO/Founder/CMO/Director/VP)
-- Realistic names, real-sounding companies for ${niche}
-- Mix of US/UK/India/Australia locations
-- phone + whatsapp in E.164 international format (+CountryCode + digits, NO spaces/dashes); whatsapp usually same as phone
-- instagram and facebook = plain handle/username only (no @, no URL)
-- website = bare domain (no https://)
-- address = realistic street + city for the location`,
-          },
-        ],
+        textQuery: query,
+        pageSize: 20,
       }),
     });
 
     if (!res.ok) {
       const err = await res.text();
-      console.error("Groq error:", res.status, err);
-      return NextResponse.json({ leads: [], error: `API error: ${res.status}` }, { status: 400 });
+      console.error("Places error:", res.status, err);
+      return NextResponse.json({ leads: [], error: `Search failed (${res.status}). Try a different niche or location.` }, { status: 400 });
     }
 
     const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || "[]";
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    const leads = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
+    const places: PlaceResult[] = data.places || [];
 
-    // Track usage
+    if (places.length === 0) {
+      return NextResponse.json({ leads: [], error: "No businesses found. Try a broader niche or different city." }, { status: 200 });
+    }
+
+    const leads = places
+      .filter((p) => p.businessStatus !== "CLOSED_PERMANENTLY")
+      .map((p, i) => {
+        const phone = toE164(p.internationalPhoneNumber || p.nationalPhoneNumber);
+        const name = p.displayName?.text || "Business";
+        return {
+          id: String(i + 1),
+          name,
+          role: p.primaryTypeDisplayName?.text || "Business",
+          company: name,
+          email: "", // Places doesn't expose email; outreach via WhatsApp/phone/website
+          phone,
+          whatsapp: phone,
+          instagram: "",
+          facebook: "",
+          website: bareDomain(p.websiteUri),
+          address: p.formattedAddress || "",
+          mapsUrl: p.googleMapsUri || "",
+          rating: p.rating,
+          reviews: p.userRatingCount,
+          industry: String(niche),
+          location: location ? String(location) : (p.formattedAddress?.split(",").slice(-2).join(",").trim() || ""),
+          verified: !!phone, // verified = has a reachable phone
+        };
+      });
+
     await incrementLeads(userId, leads.length);
 
     return NextResponse.json({
@@ -83,6 +130,6 @@ Rules:
     });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ leads: [], error: "Failed to generate leads" }, { status: 500 });
+    return NextResponse.json({ leads: [], error: "Failed to fetch leads. Try again." }, { status: 500 });
   }
 }

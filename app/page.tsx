@@ -172,9 +172,41 @@ const faqs = [
 
 const trustLogos = ["Shopify", "Stripe", "Notion", "Linear", "Vercel", "Figma"];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "Paradrop",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://paradrop.in",
+      description:
+        "AI lead generation for freelancers and agencies. Find local business leads with phone, email, Instagram and website, then auto-write a personalized cold email and WhatsApp DM for each.",
+      offers: [
+        { "@type": "Offer", name: "Free", price: "0", priceCurrency: "INR" },
+        { "@type": "Offer", name: "Lifetime", price: "1499", priceCurrency: "INR" },
+      ],
+      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "2400" },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Aurora Background */}
       <div className="fixed inset-0 -z-10 bg-[#F7F6F2]">
         <div className="grid-bg" />

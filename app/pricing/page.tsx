@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Zap, ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucide-react";
 
 type Interval = "monthly" | "quarterly" | "yearly" | "lifetime";
 
@@ -202,9 +202,7 @@ export default function PricingPage() {
 
       <nav className="border-b border-[#08090A]/10 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-600 flex items-center justify-center">
-            <Zap size={13} className="text-white" fill="white" />
-          </div>
+          <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <Link href="/" className="flex items-center gap-1.5 text-sm text-[#08090A]/70 hover:text-[#08090A] transition-colors">

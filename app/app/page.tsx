@@ -196,9 +196,7 @@ function AppDashboardContent() {
       {/* Top bar */}
       <nav className="border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-emerald-600 flex items-center justify-center">
-            <Zap size={12} className="text-white" fill="white" />
-          </div>
+          <img src="/paradrop-logo.png" alt="Paradrop" className="w-6 h-6 rounded-md object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <div className="flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg p-0.5">

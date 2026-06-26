@@ -204,9 +204,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 border-b border-[#08090A]/10 bg-[#F7F6F2]/70 backdrop-blur-2xl">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-600 flex items-center justify-center glow-soft">
-              <Zap size={15} className="text-white" fill="white" />
-            </div>
+            <img src="/paradrop-logo.png" alt="Paradrop" className="w-8 h-8 rounded-xl object-cover glow-soft" />
             <span className="font-bold text-lg tracking-tight">Paradrop</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-[#08090A]/65">
@@ -467,7 +465,7 @@ export default function Home() {
                 </div>
                 <span className="text-xs font-bold gradient-text-violet">{t.closed} closed</span>
               </div>
-              <p className="text-sm text-[#08090A]/75 leading-relaxed mb-6">"{t.quote}"</p>
+              <p className="text-sm text-[#08090A]/75 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
               <div className="flex items-center gap-3 pt-4 border-t border-[#08090A]/8">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-600/20 to-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-white">
                   {t.avatar}
@@ -577,9 +575,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-600 flex items-center justify-center">
-                  <Zap size={13} className="text-white" fill="white" />
-                </div>
+                <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
                 <span className="font-bold text-sm">Paradrop</span>
               </div>
               <p className="text-xs text-[#08090A]/70 leading-relaxed max-w-xs">AI-powered lead generation and cold outreach built for freelancers, sales reps, and indie agencies.</p>

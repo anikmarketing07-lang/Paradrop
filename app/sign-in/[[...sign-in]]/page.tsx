@@ -1,5 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import { Zap } from "lucide-react";
 
 export default function SignInPage() {
   return (
@@ -15,9 +14,7 @@ export default function SignInPage() {
       <div className="w-full max-w-md flex flex-col items-center relative z-10">
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 mb-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-600/30">
-              <Zap size={17} className="text-white" fill="white" />
-            </div>
+            <img src="/paradrop-logo.png" alt="Paradrop" className="w-9 h-9 rounded-xl object-cover shadow-lg shadow-emerald-600/30" />
             <span className="font-bold text-xl text-[#08090A] tracking-tight">Paradrop</span>
           </div>
           <p className="text-sm text-[#5F5F6B]">Welcome back. Sign in to find your next client.</p>

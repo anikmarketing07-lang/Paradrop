@@ -3,6 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserUsage, incrementLeads } from "@/lib/usage";
 import { scrapeContacts } from "@/lib/scrape";
 
+// Allow up to 60s on Vercel so website enrichment never trips the default 10s cap.
+export const maxDuration = 60;
+
 type PlaceResult = {
   displayName?: { text?: string };
   formattedAddress?: string;
@@ -125,26 +128,29 @@ export async function POST(req: NextRequest) {
       });
 
     // Enrich in parallel: scrape each website for email + IG + FB handles.
-    // Bounded to ~6s total so the request stays snappy.
-    const enrichmentDeadline = Date.now() + 6000;
-    const leads = await Promise.all(
-      baseLeads.map(async (lead) => {
-        if (!lead.website) return lead;
-        const remaining = enrichmentDeadline - Date.now();
-        if (remaining <= 500) return lead;
-        try {
-          const contacts = await scrapeContacts(lead.website);
-          return {
-            ...lead,
-            email: contacts.email || lead.email,
-            instagram: contacts.instagram || lead.instagram,
-            facebook: contacts.facebook || lead.facebook,
-          };
-        } catch {
-          return lead;
-        }
-      })
+    // Best-effort — capped by a global timeout so a few slow sites can never
+    // hang (or fail) the whole request. If enrichment doesn't finish in time,
+    // we return the base leads (phone, website, address all still present).
+    const enrichOne = async (lead: (typeof baseLeads)[number]) => {
+      if (!lead.website) return lead;
+      try {
+        const contacts = await scrapeContacts(lead.website);
+        return {
+          ...lead,
+          email: contacts.email || lead.email,
+          instagram: contacts.instagram || lead.instagram,
+          facebook: contacts.facebook || lead.facebook,
+        };
+      } catch {
+        return lead;
+      }
+    };
+
+    const enrichment = Promise.all(baseLeads.map(enrichOne));
+    const fallback = new Promise<typeof baseLeads>((resolve) =>
+      setTimeout(() => resolve(baseLeads), 12000)
     );
+    const leads = await Promise.race([enrichment, fallback]);
 
     await incrementLeads(userId, leads.length);
 

@@ -111,7 +111,7 @@ export async function scrapeContacts(websiteDomain: string): Promise<ScrapedCont
 
   let combined = "";
   for (const url of candidates) {
-    const html = await fetchHtml(url, 4000);
+    const html = await fetchHtml(url, 2500);
     if (html) combined += "\n" + html;
     // If we already have everything from the homepage, skip /contact.
     if (combined && pickEmail(combined) && pickHandle(combined, IG_RE) && pickHandle(combined, FB_RE)) break;

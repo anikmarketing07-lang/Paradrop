@@ -128,23 +128,8 @@ const LIFETIME_PLAN: Plan = {
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [interval, setInterval] = useState<Interval>("monthly");
-  const [payMethod, setPayMethod] = useState<PayMethod>("upi");
+  const [payMethod, setPayMethod] = useState<PayMethod>("card");
   const [showUpiModal, setShowUpiModal] = useState<{ plan: Plan; price: ReturnType<typeof calculatePrice>; interval: Interval } | null>(null);
-
-  useEffect(() => {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-      const lang = (typeof navigator !== "undefined" ? navigator.language : "") || "";
-      const isIndia =
-        tz === "Asia/Kolkata" ||
-        tz === "Asia/Calcutta" ||
-        lang.toLowerCase().endsWith("-in") ||
-        lang.toLowerCase().startsWith("hi");
-      setPayMethod(isIndia ? "upi" : "card");
-    } catch {
-      // fallback stays UPI
-    }
-  }, []);
 
   async function handleRazorpayCheckout(plan: string, intervalOverride?: Interval) {
     setLoading(plan);

@@ -1,11 +1,10 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Zap, ArrowLeft, Loader2, CheckCircle2, RefreshCw, CreditCard, Smartphone, Crown, Flame } from "lucide-react";
+import { Zap, ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucide-react";
 
 type Interval = "monthly" | "quarterly" | "yearly" | "lifetime";
-type PayMethod = "card" | "upi";
 
 const LIFETIME_INR = 1499;
 
@@ -100,13 +99,6 @@ function calculatePrice(basePrice: number, interval: Interval) {
   return { perMonthUSD, totalUSD, totalINR, months };
 }
 
-function intervalLabel(interval: Interval) {
-  if (interval === "monthly") return "monthly";
-  if (interval === "quarterly") return "every 3 months";
-  if (interval === "lifetime") return "lifetime";
-  return "yearly";
-}
-
 const LIFETIME_PLAN: Plan = {
   id: "lifetime",
   name: "Lifetime",
@@ -128,8 +120,6 @@ const LIFETIME_PLAN: Plan = {
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [interval, setInterval] = useState<Interval>("monthly");
-  const [payMethod, setPayMethod] = useState<PayMethod>("card");
-  const [showUpiModal, setShowUpiModal] = useState<{ plan: Plan; price: ReturnType<typeof calculatePrice>; interval: Interval } | null>(null);
 
   async function handleRazorpayCheckout(plan: string, intervalOverride?: Interval) {
     setLoading(plan);
@@ -147,12 +137,7 @@ export default function PricingPage() {
         return;
       }
       if (orderRes.status === 503) {
-        // Razorpay not configured — fall back to manual UPI
-        const planObj = plan === "lifetime" ? LIFETIME_PLAN : plans.find((p) => p.stripePlan === plan);
-        if (planObj) {
-          setPayMethod("upi");
-          openUpiModal(planObj, useInterval);
-        }
+        alert("Payments are temporarily unavailable. Please try again in a moment.");
         return;
       }
       if (!orderRes.ok || !order.orderId) {
@@ -206,14 +191,6 @@ export default function PricingPage() {
     } finally {
       setLoading(null);
     }
-  }
-
-  function openUpiModal(plan: Plan, intervalOverride?: Interval) {
-    const useInterval = intervalOverride || interval;
-    const price = plan.id === "lifetime"
-      ? { perMonthUSD: 0, totalUSD: 0, totalINR: LIFETIME_INR, months: 0 }
-      : calculatePrice(plan.basePrice, useInterval);
-    setShowUpiModal({ plan, price, interval: useInterval });
   }
 
   return (
@@ -275,51 +252,16 @@ export default function PricingPage() {
                 <span className="text-5xl font-bold text-[#08090A]">₹{LIFETIME_INR.toLocaleString("en-IN")}</span>
               </div>
               <div className="text-xs text-amber-500 font-semibold mb-4">One time. Never pay again.</div>
-              {payMethod === "upi" ? (
-                <button
-                  onClick={() => openUpiModal(LIFETIME_PLAN, "lifetime")}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/40 transition-all"
-                >
-                  <Smartphone size={14} /> Pay ₹{LIFETIME_INR} via UPI
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleRazorpayCheckout("lifetime", "lifetime")}
-                  disabled={loading === "lifetime"}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/40 transition-all disabled:opacity-50"
-                >
-                  {loading === "lifetime" ? <Loader2 size={14} className="animate-spin" /> : <Crown size={14} />}
-                  Claim lifetime ₹{LIFETIME_INR}
-                </button>
-              )}
+              <button
+                onClick={() => handleRazorpayCheckout("lifetime", "lifetime")}
+                disabled={loading === "lifetime"}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/40 transition-all disabled:opacity-50"
+              >
+                {loading === "lifetime" ? <Loader2 size={14} className="animate-spin" /> : <Crown size={14} />}
+                Claim lifetime ₹{LIFETIME_INR}
+              </button>
               <p className="text-[10px] text-[#08090A]/65 mt-2">Backed by 7-day refund. No questions asked.</p>
             </div>
-          </div>
-        </div>
-
-        {/* Payment method toggle */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-xl p-1">
-            <button
-              onClick={() => setPayMethod("card")}
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-                payMethod === "card"
-                  ? "bg-gradient-to-br from-emerald-600 to-emerald-600 text-[#08090A]"
-                  : "text-[#08090A]/75 hover:text-[#08090A]"
-              }`}
-            >
-              <CreditCard size={14} /> Instant <span className="text-[10px] bg-emerald-500/12 text-emerald-600 px-1.5 py-0.5 rounded">Card · UPI · Wallet</span>
-            </button>
-            <button
-              onClick={() => setPayMethod("upi")}
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-                payMethod === "upi"
-                  ? "bg-gradient-to-br from-emerald-600 to-emerald-600 text-[#08090A]"
-                  : "text-[#08090A]/75 hover:text-[#08090A]"
-              }`}
-            >
-              <Smartphone size={14} /> Manual UPI
-            </button>
           </div>
         </div>
 
@@ -352,7 +294,6 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {plans.map((p) => {
             const price = calculatePrice(p.basePrice, interval);
-            const isUpi = payMethod === "upi";
             return (
               <div
                 key={p.id}
@@ -378,8 +319,6 @@ export default function PricingPage() {
                   <p className="text-xs text-[#08090A]/70 min-h-[2.5em]">
                     {p.basePrice === 0
                       ? "Free forever, no card needed."
-                      : isUpi
-                      ? `Manual UPI · pay then submit txn ID`
                       : `One-click via UPI, card, wallet, or netbanking`}
                   </p>
                 </div>
@@ -400,17 +339,6 @@ export default function PricingPage() {
                   >
                     Start free
                   </Link>
-                ) : isUpi ? (
-                  <button
-                    onClick={() => openUpiModal(p)}
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all ${
-                      p.highlight
-                        ? "btn-gradient text-white"
-                        : "border border-[#08090A]/12 bg-[#08090A]/3 text-[#08090A]/75 hover:text-[#08090A] hover:border-[#08090A]/18 hover:bg-[#EEEDE7]"
-                    }`}
-                  >
-                    Pay ₹{price.totalINR.toLocaleString("en-IN")} via UPI
-                  </button>
                 ) : (
                   <button
                     onClick={() => p.stripePlan && handleRazorpayCheckout(p.stripePlan)}
@@ -444,159 +372,6 @@ export default function PricingPage() {
         <p className="text-center text-[#08090A]/50 text-xs mt-8">
           Questions? Email <a href="mailto:hello@paradrop.in" className="underline hover:text-[#08090A]/70">hello@paradrop.in</a>
         </p>
-      </div>
-
-      {/* UPI Modal */}
-      {showUpiModal && <UpiModal data={showUpiModal} interval={showUpiModal.interval} onClose={() => setShowUpiModal(null)} />}
-    </div>
-  );
-}
-
-function UpiModal({
-  data,
-  interval,
-  onClose,
-}: {
-  data: { plan: Plan; price: ReturnType<typeof calculatePrice> };
-  interval: Interval;
-  onClose: () => void;
-}) {
-  const upiId = "9303776635@slc";
-  const merchantName = "Anik Vishwakarma";
-  const note = `Paradrop ${data.plan.name} ${intervalLabel(interval)}`;
-  const amount = data.price.totalINR;
-
-  const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(upiLink)}&bgcolor=ffffff&color=000000&margin=10`;
-
-  const [txnId, setTxnId] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-
-  async function submit() {
-    if (!txnId.trim()) {
-      alert("Enter your UPI transaction ID after paying");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/upi/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plan: data.plan.stripePlan,
-          interval,
-          amount,
-          txnId: txnId.trim(),
-        }),
-      });
-      const body = await res.json().catch(() => ({}));
-      if (res.ok) {
-        setDone(true);
-        return;
-      }
-      if (res.status === 401) {
-        if (confirm("Please sign in first. Go to sign-in?")) {
-          window.location.href = "/sign-in";
-        }
-        return;
-      }
-      alert(body.error || "Failed to submit. Try again.");
-    } catch {
-      alert("Network error. Try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div
-        className="gradient-border-animated max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {done ? (
-          <div className="text-center py-6">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-              <CheckCircle2 size={28} className="text-emerald-500" />
-            </div>
-            <h2 className="text-xl font-bold mb-2">Payment submitted</h2>
-            <p className="text-sm text-[#08090A]/65 mb-6">
-              We&apos;ll verify within 12 hours and activate your <strong>{data.plan.name}</strong> plan. You&apos;ll get an email confirmation.
-            </p>
-            <button onClick={onClose} className="btn-gradient text-white px-6 py-2.5 rounded-lg text-sm font-semibold">
-              Close
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="text-xs text-emerald-600 font-semibold uppercase tracking-wider mb-1">
-                  {data.plan.name} · {intervalLabel(interval)}
-                </div>
-                <h2 className="text-2xl font-bold">Pay ₹{amount.toLocaleString("en-IN")}</h2>
-              </div>
-              <button onClick={onClose} className="text-[#08090A]/70 hover:text-[#08090A] text-2xl">×</button>
-            </div>
-
-            <div className="bg-white p-4 rounded-xl mb-4 flex justify-center">
-              <img src={qrUrl} alt="UPI QR" width={280} height={280} />
-            </div>
-
-            <div className="text-center mb-4">
-              <p className="text-xs text-[#08090A]/70 mb-1">Scan with any UPI app</p>
-              <p className="text-xs text-[#08090A]/70">GPay · PhonePe · Paytm · BHIM · Slice</p>
-            </div>
-
-            <div className="bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg p-3 mb-4 space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-[#08090A]/70">UPI ID</span>
-                <span className="text-[#08090A] font-mono">{upiId}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[#08090A]/70">Name</span>
-                <span className="text-[#08090A]">{merchantName}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[#08090A]/70">Amount</span>
-                <span className="text-[#08090A] font-semibold">₹{amount.toLocaleString("en-IN")} (fixed)</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[#08090A]/70">Note</span>
-                <span className="text-[#08090A] truncate ml-2 max-w-[60%] text-right">{note}</span>
-              </div>
-            </div>
-
-            <a
-              href={upiLink}
-              className="block btn-gradient text-white text-center py-3 rounded-lg text-sm font-semibold mb-4"
-            >
-              Open UPI app
-            </a>
-
-            <div className="border-t border-[#08090A]/10 pt-4">
-              <label className="text-xs text-[#08090A]/65 block mb-2">After payment, paste UPI transaction ID</label>
-              <input
-                value={txnId}
-                onChange={(e) => setTxnId(e.target.value)}
-                placeholder="UPI Ref / Transaction ID"
-                className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2.5 text-sm text-[#08090A] placeholder-white/20 outline-none focus:border-sky-600/50 mb-3"
-              />
-              <button
-                onClick={submit}
-                disabled={submitting}
-                className="w-full btn-gradient text-white py-3 rounded-lg text-sm font-semibold disabled:opacity-50"
-              >
-                {submitting ? "Submitting..." : "I've paid — activate my plan"}
-              </button>
-            </div>
-
-            <p className="text-center text-xs text-[#08090A]/65 mt-4">
-              Manual verification within 12 hours. We&apos;ll email confirmation.
-            </p>
-          </>
-        )}
       </div>
     </div>
   );

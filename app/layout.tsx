@@ -6,7 +6,7 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LeadDrop — AI Lead Generation for Freelancers",
+  title: "Paradrop — AI Lead Generation for Freelancers",
   description: "Find high-quality leads and send personalized cold emails in bulk. Free to start. No credit card required.",
 };
 
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       signUpFallbackRedirectUrl="/app"
     >
       <html lang="en" className={`${geist.variable} h-full`}>
-        <body className="min-h-full bg-[#0b1220] text-white antialiased">{children}</body>
+        <body className="min-h-full bg-[#F7F6F2] text-[#08090A] antialiased">{children}</body>
       </html>
     </ClerkProvider>
   );

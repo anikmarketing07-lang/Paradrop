@@ -20,10 +20,14 @@ export async function POST(req: NextRequest) {
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json({ error: "Missing payment fields." }, { status: 400 });
     }
-    if (!["pro", "agency"].includes(plan)) {
+    if (!["pro", "agency", "lifetime"].includes(plan)) {
       return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
     }
-    if (!["monthly", "quarterly", "yearly"].includes(interval)) {
+    if (plan === "lifetime") {
+      if (interval !== "lifetime") {
+        return NextResponse.json({ error: "Invalid interval for lifetime." }, { status: 400 });
+      }
+    } else if (!["monthly", "quarterly", "yearly"].includes(interval)) {
       return NextResponse.json({ error: "Invalid interval." }, { status: 400 });
     }
 
@@ -65,9 +69,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Upgrade user + set expiry
-    const months = interval === "yearly" ? 12 : interval === "quarterly" ? 3 : 1;
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + months * 30 * 24 * 60 * 60 * 1000);
+    let expiresAt: Date;
+    if (interval === "lifetime") {
+      // Lifetime = ~100 years in the future. Effectively never expires.
+      expiresAt = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
+    } else {
+      const months = interval === "yearly" ? 12 : interval === "quarterly" ? 3 : 1;
+      expiresAt = new Date(now.getTime() + months * 30 * 24 * 60 * 60 * 1000);
+    }
 
     await setUserPlan(userId, plan as Plan);
     const client = await clerkClient();

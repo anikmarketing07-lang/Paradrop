@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserUsage, incrementLeads } from "@/lib/usage";
+import { scrapeContacts } from "@/lib/scrape";
 
 type PlaceResult = {
   displayName?: { text?: string };
@@ -96,31 +97,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ leads: [], error: "No businesses found. Try a broader niche or different city." }, { status: 200 });
     }
 
-    const leads = places
+    const baseLeads = places
       .filter((p) => p.businessStatus !== "CLOSED_PERMANENTLY")
       .map((p, i) => {
         const phone = toE164(p.internationalPhoneNumber || p.nationalPhoneNumber);
         const name = p.displayName?.text || "Business";
+        const website = bareDomain(p.websiteUri);
         return {
           id: String(i + 1),
           name,
           role: p.primaryTypeDisplayName?.text || "Business",
           company: name,
-          email: "", // Places doesn't expose email; outreach via WhatsApp/phone/website
+          email: "",
           phone,
           whatsapp: phone,
           instagram: "",
           facebook: "",
-          website: bareDomain(p.websiteUri),
+          website,
           address: p.formattedAddress || "",
           mapsUrl: p.googleMapsUri || "",
           rating: p.rating,
           reviews: p.userRatingCount,
           industry: String(niche),
           location: location ? String(location) : (p.formattedAddress?.split(",").slice(-2).join(",").trim() || ""),
-          verified: !!phone, // verified = has a reachable phone
+          verified: !!phone,
         };
       });
+
+    // Enrich in parallel: scrape each website for email + IG + FB handles.
+    // Bounded to ~6s total so the request stays snappy.
+    const enrichmentDeadline = Date.now() + 6000;
+    const leads = await Promise.all(
+      baseLeads.map(async (lead) => {
+        if (!lead.website) return lead;
+        const remaining = enrichmentDeadline - Date.now();
+        if (remaining <= 500) return lead;
+        try {
+          const contacts = await scrapeContacts(lead.website);
+          return {
+            ...lead,
+            email: contacts.email || lead.email,
+            instagram: contacts.instagram || lead.instagram,
+            facebook: contacts.facebook || lead.facebook,
+          };
+        } catch {
+          return lead;
+        }
+      })
+    );
 
     await incrementLeads(userId, leads.length);
 

@@ -4,6 +4,7 @@ export const PLAN_LIMITS = {
   free: 20,
   pro: 500,
   agency: Infinity,
+  lifetime: 5000,
 } as const;
 
 export const RESET_DAYS = 30;

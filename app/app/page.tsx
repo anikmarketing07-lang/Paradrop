@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown, MessageCircle, Phone, MapPin, Globe } from "lucide-react";
@@ -22,6 +22,7 @@ function Facebook({ size = 13 }: { size?: number }) {
 }
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
+import AssistantWidget from "./AssistantWidget";
 
 type Lead = {
   id: string;
@@ -93,8 +94,8 @@ export default function AppDashboard() {
 
   if (!isLoaded || !isSignedIn) {
     return (
-      <div className="min-h-screen bg-[#0b1220] flex items-center justify-center">
-        <div className="text-white/40 text-sm">Loading...</div>
+      <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center">
+        <div className="text-[#08090A]/70 text-sm">Loading...</div>
       </div>
     );
   }
@@ -191,24 +192,24 @@ function AppDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b1220] text-white flex flex-col">
+    <div className="min-h-screen bg-[#F7F6F2] text-[#08090A] flex flex-col">
       {/* Top bar */}
-      <nav className="border-b border-white/[0.06] bg-[#0b1220]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
+      <nav className="border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-sky-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-emerald-600 flex items-center justify-center">
             <Zap size={12} className="text-white" fill="white" />
           </div>
-          <span className="font-bold text-sm">LeadDrop</span>
+          <span className="font-bold text-sm">Paradrop</span>
         </Link>
-        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.06] rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg p-0.5">
           {(["search", "leads", "compose"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${
                 activeTab === tab
-                  ? "bg-sky-600 text-white"
-                  : "text-white/40 hover:text-white"
+                  ? "bg-emerald-600 text-white"
+                  : "text-[#08090A]/70 hover:text-[#08090A]"
               }`}
             >
               {tab === "leads" ? `Leads ${leads.length > 0 ? `(${leads.length})` : ""}` : tab}
@@ -217,19 +218,19 @@ function AppDashboardContent() {
         </div>
         <div className="flex items-center gap-3">
           {usage && (
-            <div className="text-xs text-white/50 hidden md:flex items-center gap-2 bg-white/[0.04] border border-white/[0.06] px-2.5 py-1.5 rounded-lg">
-              <span className="font-semibold text-white">{usage.leadCount}</span>
-              <span className="text-white/30">/</span>
-              <span>{usage.limit === Infinity ? "∞" : usage.limit}</span>
-              <span className="text-white/30">leads</span>
-              <span className="text-[10px] uppercase tracking-wider text-sky-400 font-bold ml-1">{usage.plan}</span>
+            <div className="text-xs text-[#08090A]/75 hidden md:flex items-center gap-2 bg-[#EEEDE7] border border-[#08090A]/10 px-2.5 py-1.5 rounded-lg">
+              <span className="font-semibold text-[#08090A]">{usage.leadCount}</span>
+              <span className="text-[#08090A]/65">/</span>
+              <span>{usage.limit === Infinity ? "âˆž" : usage.limit}</span>
+              <span className="text-[#08090A]/65">leads</span>
+              <span className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold ml-1">{usage.plan}</span>
             </div>
           )}
-          <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
+          <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-[#08090A]/70 hover:text-[#08090A] transition-colors">
             <BarChart2 size={13} /> Analytics
           </Link>
           {usage?.plan === "free" && (
-            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-sky-600/10 border border-sky-600/20 text-sky-400 hover:bg-sky-600/20 px-2.5 py-1.5 rounded-lg transition-colors">
+            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-emerald-600/8 border border-emerald-600/25 text-emerald-600 hover:bg-emerald-600/15 px-2.5 py-1.5 rounded-lg transition-colors">
               <Crown size={12} /> Upgrade
             </Link>
           )}
@@ -244,29 +245,29 @@ function AppDashboardContent() {
           <div className="max-w-2xl mx-auto">
             <div className="mb-8">
               <h1 className="text-2xl font-bold mb-1">Find your leads</h1>
-              <p className="text-white/40 text-sm">Pick a business type + city. We pull real businesses with phone, website & address.</p>
+              <p className="text-[#08090A]/70 text-sm">Pick a business type + city. We pull real businesses with phone, website & address.</p>
             </div>
 
             {/* Your info */}
             <div className="gradient-border p-5 mb-4">
-              <div className="text-xs text-white/40 uppercase tracking-wider font-medium mb-4">About you</div>
+              <div className="text-xs text-[#08090A]/70 uppercase tracking-wider font-medium mb-4">About you</div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-white/50 block mb-1.5">Your name</label>
+                  <label className="text-xs text-[#08090A]/75 block mb-1.5">Your name</label>
                   <input
                     value={yourName}
                     onChange={(e) => setYourName(e.target.value)}
                     placeholder="Alex Johnson"
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
+                    className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2 text-sm text-[#08090A] placeholder-[#08090A]/45 outline-none focus:border-sky-600/50 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-white/50 block mb-1.5">Your skill / service</label>
+                  <label className="text-xs text-[#08090A]/75 block mb-1.5">Your skill / service</label>
                   <input
                     value={yourSkill}
                     onChange={(e) => setYourSkill(e.target.value)}
                     placeholder="React developer, Brand designer..."
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
+                    className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2 text-sm text-[#08090A] placeholder-[#08090A]/45 outline-none focus:border-sky-600/50 transition-colors"
                   />
                 </div>
               </div>
@@ -274,7 +275,7 @@ function AppDashboardContent() {
 
             {/* Niche selector */}
             <div className="gradient-border p-5 mb-4">
-              <div className="text-xs text-white/40 uppercase tracking-wider font-medium mb-4">Target niche</div>
+              <div className="text-xs text-[#08090A]/70 uppercase tracking-wider font-medium mb-4">Target niche</div>
               <div className="grid grid-cols-2 gap-2 mb-4">
                 {niches.map((n) => (
                   <button
@@ -282,8 +283,8 @@ function AppDashboardContent() {
                     onClick={() => { setNiche(n); setCustomNiche(""); }}
                     className={`text-left px-3 py-2.5 rounded-lg text-xs transition-all border ${
                       niche === n && !customNiche
-                        ? "bg-sky-600/20 border-sky-600/40 text-sky-300"
-                        : "bg-white/[0.03] border-white/[0.06] text-white/50 hover:text-white hover:border-white/[0.12]"
+                        ? "bg-emerald-600/15 border-sky-600/40 text-emerald-700"
+                        : "bg-white border-[#08090A]/10 text-[#08090A]/75 hover:text-[#08090A] hover:border-[#08090A]/15"
                     }`}
                   >
                     {n}
@@ -294,28 +295,28 @@ function AppDashboardContent() {
                 value={customNiche}
                 onChange={(e) => { setCustomNiche(e.target.value); setNiche(""); }}
                 placeholder="Or type a custom business type..."
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
+                className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2.5 text-sm text-[#08090A] placeholder-[#08090A]/45 outline-none focus:border-sky-600/50 transition-colors"
               />
             </div>
 
             {/* City / location */}
             <div className="gradient-border p-5 mb-4">
-              <div className="text-xs text-white/40 uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
-                <MapPin size={12} className="text-cyan-400" /> City / area
+              <div className="text-xs text-[#08090A]/70 uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
+                <MapPin size={12} className="text-emerald-600" /> City / area
               </div>
               <input
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="e.g. Mumbai, Bangalore, Delhi NCR..."
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-sky-600/50 transition-colors"
+                className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2.5 text-sm text-[#08090A] placeholder-[#08090A]/45 outline-none focus:border-sky-600/50 transition-colors"
               />
-              <p className="text-[11px] text-white/30 mt-2">Add a city to find local businesses you can pitch.</p>
+              <p className="text-[11px] text-[#08090A]/65 mt-2">Add a city to find local businesses you can pitch.</p>
             </div>
 
             <button
               onClick={findLeads}
               disabled={loading || !selectedNiche}
-              className="w-full flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-sky-600/30"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-[#08090A] py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-sky-600/30"
             >
               {loading ? (
                 <><Loader2 size={16} className="animate-spin" /> Finding businesses...</>
@@ -332,12 +333,12 @@ function AppDashboardContent() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl font-bold">{leads.length} leads found</h2>
-                <p className="text-white/40 text-xs mt-0.5">{selectedLeads.length} selected for outreach</p>
+                <p className="text-[#08090A]/70 text-xs mt-0.5">{selectedLeads.length} selected for outreach</p>
               </div>
               <button
                 onClick={generateAllEmails}
                 disabled={generatingAll || selectedLeads.length === 0}
-                className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-[#08090A] px-4 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 {generatingAll ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
                 Generate {selectedLeads.length} messages
@@ -359,76 +360,76 @@ function AppDashboardContent() {
                       onChange={() => toggleLead(lead.id)}
                       className="w-4 h-4 accent-sky-600 cursor-pointer"
                     />
-                    <div className="w-9 h-9 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300 shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
                       {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm text-white">{lead.name}</div>
-                      <div className="text-xs text-white/40">{lead.role}</div>
+                      <div className="font-medium text-sm text-[#08090A]">{lead.name}</div>
+                      <div className="text-xs text-[#08090A]/70">{lead.role}</div>
                     </div>
                     {typeof lead.rating === "number" && (
-                      <div className="hidden md:flex items-center gap-1 text-xs text-amber-400 shrink-0">
-                        ★ {lead.rating}
-                        {lead.reviews ? <span className="text-white/30">({lead.reviews})</span> : null}
+                      <div className="hidden md:flex items-center gap-1 text-xs text-amber-500 shrink-0">
+                        â˜… {lead.rating}
+                        {lead.reviews ? <span className="text-[#08090A]/65">({lead.reviews})</span> : null}
                       </div>
                     )}
                     {lead.verified ? (
-                      <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full shrink-0">
+                      <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/12 px-2 py-1 rounded-full shrink-0">
                         <CheckCircle size={10} />
                         Has phone
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-white/30 bg-white/[0.04] px-2 py-1 rounded-full shrink-0">
+                      <div className="flex items-center gap-1 text-xs text-[#08090A]/65 bg-[#EEEDE7] px-2 py-1 rounded-full shrink-0">
                         No phone
                       </div>
                     )}
                     <button
                       onClick={() => generateEmail(lead.id)}
                       disabled={lead.status === "generating" || lead.status === "sent"}
-                      className="text-xs text-sky-400 hover:text-sky-300 disabled:opacity-40 shrink-0 transition-colors"
+                      className="text-xs text-emerald-600 hover:text-emerald-700 disabled:opacity-40 shrink-0 transition-colors"
                     >
                       {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
-                       lead.status === "done" ? "✓ Ready" :
-                       lead.status === "sent" ? "✓ Sent" : "Generate"}
+                       lead.status === "done" ? "âœ“ Ready" :
+                       lead.status === "sent" ? "âœ“ Sent" : "Generate"}
                     </button>
                   </div>
 
                   {/* Contact details + channel buttons */}
-                  <div className="mt-3 pt-3 border-t border-white/[0.04] flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+                  <div className="mt-3 pt-3 border-t border-[#08090A]/8 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
                     {lead.email && (
-                      <span className="flex items-center gap-1 text-white/50"><Mail size={11} className="text-sky-400" />{lead.email}</span>
+                      <span className="flex items-center gap-1 text-[#08090A]/75"><Mail size={11} className="text-emerald-600" />{lead.email}</span>
                     )}
                     {lead.phone && (
-                      <span className="flex items-center gap-1 text-white/50"><Phone size={11} className="text-emerald-400" />{lead.phone}</span>
+                      <span className="flex items-center gap-1 text-[#08090A]/75"><Phone size={11} className="text-emerald-600" />{lead.phone}</span>
                     )}
                     {lead.website && (
-                      <a href={`https://${lead.website.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-white/50 hover:text-sky-300"><Globe size={11} className="text-sky-400" />{lead.website}</a>
+                      <a href={`https://${lead.website.replace(/^https?:\/\//, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#08090A]/75 hover:text-emerald-700"><Globe size={11} className="text-emerald-600" />{lead.website}</a>
                     )}
                     {lead.address && (
-                      <span className="flex items-center gap-1 text-white/50"><MapPin size={11} className="text-cyan-400" />{lead.address}</span>
+                      <span className="flex items-center gap-1 text-[#08090A]/75"><MapPin size={11} className="text-emerald-600" />{lead.address}</span>
                     )}
                     <div className="ml-auto flex items-center gap-1">
                       {waLink(lead) && (
                         <a href={waLink(lead)!} target="_blank" rel="noopener noreferrer" title="WhatsApp"
-                          className="w-7 h-7 rounded-md flex items-center justify-center bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-colors">
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-emerald-500/12 hover:bg-emerald-500/12 text-emerald-600 transition-colors">
                           <MessageCircle size={13} />
                         </a>
                       )}
                       {igLink(lead) && (
                         <a href={igLink(lead)!} target="_blank" rel="noopener noreferrer" title="Instagram"
-                          className="w-7 h-7 rounded-md flex items-center justify-center bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 transition-colors">
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-emerald-600/12 hover:bg-emerald-600/20 text-emerald-500 transition-colors">
                           <Instagram size={13} />
                         </a>
                       )}
                       {fbLink(lead) && (
                         <a href={fbLink(lead)!} target="_blank" rel="noopener noreferrer" title="Facebook"
-                          className="w-7 h-7 rounded-md flex items-center justify-center bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 transition-colors">
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 transition-colors">
                           <Facebook size={13} />
                         </a>
                       )}
                       {lead.email && (
                         <a href={`mailto:${lead.email}`} title="Email"
-                          className="w-7 h-7 rounded-md flex items-center justify-center bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 transition-colors">
+                          className="w-7 h-7 rounded-md flex items-center justify-center bg-cyan-500/10 hover:bg-cyan-500/20 text-emerald-600 transition-colors">
                           <Mail size={13} />
                         </a>
                       )}
@@ -445,11 +446,11 @@ function AppDashboardContent() {
           <div>
             <div className="mb-6">
               <h2 className="text-xl font-bold">Review & send</h2>
-              <p className="text-white/40 text-xs mt-0.5">AI-written emails for each lead. Edit before sending.</p>
+              <p className="text-[#08090A]/70 text-xs mt-0.5">AI-written emails for each lead. Edit before sending.</p>
             </div>
 
             {leads.filter((l) => l.selected).length === 0 ? (
-              <div className="text-center py-16 text-white/30">
+              <div className="text-center py-16 text-[#08090A]/65">
                 <Mail size={32} className="mx-auto mb-3 opacity-30" />
                 <p className="text-sm">No leads selected. Go back and select leads first.</p>
               </div>
@@ -459,16 +460,16 @@ function AppDashboardContent() {
                   <div key={lead.id} className="gradient-border p-5">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-sky-600/20 border border-sky-600/30 flex items-center justify-center text-xs font-bold text-sky-300">
+                        <div className="w-8 h-8 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700">
                           {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-white">{lead.name}</div>
-                          <div className="text-xs text-white/40">{lead.email}</div>
+                          <div className="text-sm font-medium text-[#08090A]">{lead.name}</div>
+                          <div className="text-xs text-[#08090A]/70">{lead.email}</div>
                         </div>
                       </div>
                       {lead.status === "sent" ? (
-                        <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full flex items-center gap-1">
+                        <span className="text-xs text-emerald-600 bg-emerald-500/12 px-2 py-1 rounded-full flex items-center gap-1">
                           <CheckCircle size={10} /> Sent
                         </span>
                       ) : (
@@ -480,7 +481,7 @@ function AppDashboardContent() {
                               rel="noopener noreferrer"
                               onClick={() => markSent(lead.id)}
                               title="WhatsApp"
-                              className={`flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
+                              className={`flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
                             >
                               <MessageCircle size={11} /> WhatsApp
                             </a>
@@ -491,7 +492,7 @@ function AppDashboardContent() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title="Instagram DM"
-                              className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
                             >
                               <Instagram size={11} /> Instagram
                             </a>
@@ -502,7 +503,7 @@ function AppDashboardContent() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title="Facebook"
-                              className="flex items-center gap-1 bg-sky-500 hover:bg-sky-400 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
                             >
                               <Facebook size={11} /> Facebook
                             </a>
@@ -513,7 +514,7 @@ function AppDashboardContent() {
                               markSent(lead.id);
                             }}
                             disabled={!lead.generatedEmail || lead.status === "generating"}
-                            className="flex items-center gap-1 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                            className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
                           >
                             <Send size={11} /> Gmail
                           </button>
@@ -522,24 +523,24 @@ function AppDashboardContent() {
                     </div>
 
                     {lead.status === "generating" ? (
-                      <div className="flex items-center gap-2 text-white/40 text-sm py-4">
+                      <div className="flex items-center gap-2 text-[#08090A]/70 text-sm py-4">
                         <Loader2 size={14} className="animate-spin" />
                         Writing personalized email...
                       </div>
                     ) : lead.generatedEmail ? (
-                      <div className="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06]">
-                        <div className="text-xs text-white/30 mb-1">Subject</div>
-                        <div className="text-sm font-medium text-white mb-3">{lead.emailSubject}</div>
-                        <div className="text-xs text-white/30 mb-1">Body</div>
-                        <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">{lead.generatedEmail}</div>
+                      <div className="bg-white rounded-xl p-4 border border-[#08090A]/10">
+                        <div className="text-xs text-[#08090A]/65 mb-1">Subject</div>
+                        <div className="text-sm font-medium text-[#08090A] mb-3">{lead.emailSubject}</div>
+                        <div className="text-xs text-[#08090A]/65 mb-1">Body</div>
+                        <div className="text-sm text-[#08090A]/75 leading-relaxed whitespace-pre-line">{lead.generatedEmail}</div>
                       </div>
                     ) : (
                       <div className="text-center py-4">
                         <button
                           onClick={() => generateEmail(lead.id)}
-                          className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
+                          className="text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
                         >
-                          Click to generate email →
+                          Click to generate email â†’
                         </button>
                       </div>
                     )}
@@ -550,6 +551,8 @@ function AppDashboardContent() {
           </div>
         )}
       </div>
+
+      <AssistantWidget plan={(usage?.plan as "free" | "pro" | "agency" | "lifetime") || "free"} />
     </div>
   );
 }

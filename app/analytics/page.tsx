@@ -65,7 +65,7 @@ function AnalyticsContent() {
           <div className="w-6 h-6 rounded-md bg-sky-600 flex items-center justify-center">
             <Zap size={12} className="text-white" fill="white" />
           </div>
-          <span className="font-bold text-sm">LeadDrop</span>
+          <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <div className="flex items-center gap-4 text-xs text-white/40">
           <Link href="/app" className="hover:text-white transition-colors flex items-center gap-1"><ArrowLeft size={12}/> Dashboard</Link>

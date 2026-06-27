@@ -6,7 +6,7 @@ import { ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucid
 
 type Interval = "monthly" | "quarterly" | "yearly" | "lifetime";
 
-const LIFETIME_INR = 1499;
+const LIFETIME_INR = 6000;
 
 declare global {
   interface Window {
@@ -233,7 +233,7 @@ export default function PricingPage() {
                 Pay once. <span className="shimmer-text">Use forever.</span>
               </h2>
               <p className="text-[#08090A]/65 text-sm mb-4">
-                First 100 buyers only. After that, it&apos;s ₹4,116/year forever. Save 96% vs. monthly.
+                First 100 buyers only. After that, it&apos;s ₹15,300/year forever. Pay once, save every year after.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {LIFETIME_PLAN.features.map((f) => (
@@ -246,7 +246,7 @@ export default function PricingPage() {
             </div>
             <div className="md:w-64 text-center md:text-right">
               <div className="flex items-baseline gap-2 justify-center md:justify-end mb-1">
-                <span className="text-[#08090A]/65 line-through text-lg">₹4,116</span>
+                <span className="text-[#08090A]/65 line-through text-lg">₹15,300</span>
                 <span className="text-5xl font-bold text-[#08090A]">₹{LIFETIME_INR.toLocaleString("en-IN")}</span>
               </div>
               <div className="text-xs text-amber-500 font-semibold mb-4">One time. Never pay again.</div>

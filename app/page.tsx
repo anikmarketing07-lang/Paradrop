@@ -201,7 +201,7 @@ const jsonLd = {
         "AI lead generation for freelancers and agencies. Find local business leads with phone, email, Instagram and website, then auto-write a personalized cold email and WhatsApp DM for each.",
       offers: [
         { "@type": "Offer", name: "Free", price: "0", priceCurrency: "INR" },
-        { "@type": "Offer", name: "Lifetime", price: "1499", priceCurrency: "INR" },
+        { "@type": "Offer", name: "Lifetime", price: "6000", priceCurrency: "INR" },
       ],
       aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "2400" },
     },
@@ -240,8 +240,8 @@ export default function Home() {
       >
         <span className="inline-flex items-center gap-2 flex-wrap justify-center">
           <Flame size={14} className="animate-pulse" />
-          <strong>Launch deal:</strong> Lifetime access ₹1,499
-          <span className="hidden md:inline opacity-80">— first 100 buyers only, then ₹4,116/year forever.</span>
+          <strong>Launch deal:</strong> Lifetime access ₹6,000
+          <span className="hidden md:inline opacity-80">— first 100 buyers only, then ₹15,300/year forever.</span>
           <span className="inline-flex items-center gap-1 font-bold underline-offset-2 group-hover:underline">
             Claim now <ArrowRight size={12} />
           </span>

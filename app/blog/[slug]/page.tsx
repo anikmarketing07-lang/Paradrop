@@ -105,7 +105,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         <div className="mt-12 gradient-border-animated p-7 text-center">
           <h3 className="text-xl font-bold mb-2">Want this on autopilot?</h3>
           <p className="text-sm text-[#08090A]/70 mb-5">
-            Paradrop pulls 20 local leads in 30 seconds and auto-writes the cold email + WhatsApp DM for each. Lifetime deal ₹1,499.
+            Paradrop pulls 20 local leads in 30 seconds and auto-writes the cold email + WhatsApp DM for each. Lifetime deal ₹6,000.
           </p>
           <Link
             href="/pricing"

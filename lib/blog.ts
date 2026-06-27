@@ -76,7 +76,7 @@ export const posts: Post[] = [
         "Local SMB data from Google Maps — clinics, gyms, salons, restaurants and more.",
         "Phone, email, Instagram and Facebook for each lead, not just a B2B email.",
         "AI writes a cold email and a WhatsApp DM for every lead automatically.",
-        "Priced in INR with UPI, card, wallet and netbanking. Lifetime deal at ₹1,499.",
+        "Priced in INR with UPI, card, wallet and netbanking. Lifetime deal at ₹6,000.",
       ] },
       { type: "p", text: "If you sell to local Indian businesses and you're tired of paying enterprise SaaS prices, an India-first tool like Paradrop covers the same outbound workflow — find, personalize, send — for a fraction of the cost." },
     ],

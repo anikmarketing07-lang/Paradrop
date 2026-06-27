@@ -5,7 +5,7 @@ const USD_TO_INR = 84;
 const PLAN_USD: Record<string, number> = { pro: 19, agency: 49 };
 const INTERVAL_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
 const INTERVAL_DISCOUNT: Record<string, number> = { monthly: 0, quarterly: 10, yearly: 20 };
-const LIFETIME_INR = 1499;
+const LIFETIME_INR = 6000;
 
 function expectedInr(plan: string, interval: string): number | null {
   if (plan === "lifetime" && interval === "lifetime") return LIFETIME_INR;

@@ -7,7 +7,7 @@ const INTERVAL_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, year
 const INTERVAL_DISCOUNT: Record<string, number> = { monthly: 0, quarterly: 10, yearly: 20 };
 
 // Lifetime deal: fixed INR price, no recurring.
-export const LIFETIME_INR = 1499;
+export const LIFETIME_INR = 6000;
 
 function expectedInr(plan: string, interval: string): number | null {
   if (plan === "lifetime" && interval === "lifetime") return LIFETIME_INR;

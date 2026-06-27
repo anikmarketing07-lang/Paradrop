@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: "Paradrop",
     title: "Paradrop — Find local clients in 30 seconds, AI writes the pitch",
     description:
-      "20 verified local business leads with phone, email & socials. AI-written cold email + WhatsApp DM for each. Built for freelancers & agencies. Lifetime deal ₹1,499.",
+      "20 verified local business leads with phone, email & socials. AI-written cold email + WhatsApp DM for each. Built for freelancers & agencies. Lifetime deal ₹6,000.",
     images: [{ url: "/paradrop-logo.png", width: 1232, height: 1232, alt: "Paradrop" }],
   },
   twitter: {

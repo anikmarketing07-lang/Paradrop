@@ -17,6 +17,23 @@ export async function POST(req: NextRequest) {
     const senderName = yourName || "Alex";
     const skill = yourSkill || "freelancer";
 
+    // Pull personalization signals from the lead (rating, reviews, address, channels available).
+    const ratingLine = typeof lead.rating === "number"
+      ? `Rating: ${lead.rating}★ (${lead.reviews ?? "?"} reviews)`
+      : "Rating: none yet";
+    const cityLine = lead.location ? `Location: ${lead.location}` : "";
+    const websiteLine = lead.website ? `Website: ${lead.website}` : "No website";
+    const hasIG = !!lead.instagram;
+    const hasFB = !!lead.facebook;
+    const hasEmail = !!lead.email;
+    const hasPhone = !!lead.phone;
+    const channelsLine = [
+      hasPhone ? "phone/WhatsApp" : null,
+      hasEmail ? "email" : null,
+      hasIG ? "Instagram" : null,
+      hasFB ? "Facebook" : null,
+    ].filter(Boolean).join(", ") || "limited contact options";
+
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -25,22 +42,51 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 500,
-        temperature: 0.8,
+        max_tokens: 600,
+        temperature: 0.9,
         messages: [
           {
             role: "system",
-            content: "You write short human cold outreach. Return ONLY valid JSON with keys 'subject', 'email', and 'dm'. No markdown. No backticks.",
+            content: `You are a sharp B2B cold-outreach copywriter for Indian SMB sales.
+
+Hard rules:
+- Sound like a real human texting another human, never an AI or template.
+- Be SPECIFIC to the lead — reference their actual rating, city, website status, or business type. Never generic openers like "I came across your business" or "I noticed your company".
+- One concrete value, plainly stated. Skip buzzwords ("synergy", "leverage", "scale", "elevate", "unlock").
+- No exclamation marks. No emoji. No sign-off names — the platform adds the name.
+- Vary the CTA across leads: a 10-min chat, a quick reply, a Loom demo, a free audit, "open to it?". Never just "15-min call" every time.
+- If the lead has NO website, that gap IS your hook for the pitch.
+- Subject line: under 7 words, lowercase fine, no clickbait.
+
+Output: ONLY a JSON object with keys "subject", "email", "dm". No markdown, no backticks, no commentary before or after.`,
           },
           {
             role: "user",
-            content: `Write cold outreach from "${senderName}" (${skill}) to ${lead.name} (${lead.role} at ${lead.company}, ${lead.industry}).
+            content: `LEAD
+Name: ${lead.name}
+Type: ${lead.role || lead.industry || "local business"}
+${cityLine}
+${ratingLine}
+${websiteLine}
+Available channels: ${channelsLine}
 
-Generate TWO versions:
-1. "email": full cold email, max 80 words, mention their role/company, one value prop, soft CTA (15-min call), no generic openers, no exclamation marks, human tone.
-2. "dm": ultra-short version for WhatsApp/Instagram DM — max 35 words, casual, one line hook + one ask. No subject line. Sound like a real person texting.
+SENDER
+Name: ${senderName}
+Pitches/offers: ${skill}
 
-Return ONLY: {"subject":"under 8 words","email":"body only","dm":"short message"}`,
+TASK — write 3 fields:
+
+1. "subject" — under 7 words. Specific. No clickbait.
+
+2. "email" — full cold email, 60-85 words. Structure:
+   - line 1: a specific hook tied to a real detail above (their rating, their city, missing website, business type)
+   - line 2-3: ONE concrete value the sender offers, in plain language
+   - line 4: a soft, varied CTA (not "15-min call" — try "worth a quick reply?", "open to a 10-min chat?", "want a free audit?", "shall I send a 2-min Loom?")
+   - No greeting beyond the name. No "I hope this finds you well". No signature.
+
+3. "dm" — WhatsApp/Instagram version, 25-40 words. Casual, lowercase fine, one hook + one ask. Sound like a person texting, not a marketer.
+
+Return ONLY: {"subject":"...","email":"...","dm":"..."}`,
           },
         ],
       }),

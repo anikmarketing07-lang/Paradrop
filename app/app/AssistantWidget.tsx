@@ -99,7 +99,7 @@ export default function AssistantWidget({ plan }: { plan: Plan }) {
                     Premium
                   </span>
                 </div>
-                <div className="text-[10px] text-[#08090A]/70">Sales assistant · powered by Gemini</div>
+                <div className="text-[10px] text-[#08090A]/70">Sales assistant · powered by Llama 3.3</div>
               </div>
             </div>
             <button

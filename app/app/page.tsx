@@ -471,7 +471,7 @@ function AppDashboardContent() {
                           <CheckCircle size={10} /> Sent
                         </span>
                       ) : (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
                           {waLink(lead) && (
                             <a
                               href={waLink(lead)!}
@@ -479,9 +479,10 @@ function AppDashboardContent() {
                               rel="noopener noreferrer"
                               onClick={() => markSent(lead.id)}
                               title="WhatsApp"
-                              className={`flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
+                              aria-label="Send via WhatsApp"
+                              className={`inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
                             >
-                              <MessageCircle size={11} /> WhatsApp
+                              <MessageCircle size={13} /> <span className="hidden sm:inline">WhatsApp</span>
                             </a>
                           )}
                           {igLink(lead) && (
@@ -490,9 +491,10 @@ function AppDashboardContent() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title="Instagram DM"
-                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                              aria-label="Send via Instagram"
+                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
                             >
-                              <Instagram size={11} /> Instagram
+                              <Instagram size={13} /> <span className="hidden sm:inline">Instagram</span>
                             </a>
                           )}
                           {fbLink(lead) && (
@@ -501,9 +503,10 @@ function AppDashboardContent() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title="Facebook"
-                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                              aria-label="Send via Facebook"
+                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
                             >
-                              <Facebook size={11} /> Facebook
+                              <Facebook size={13} /> <span className="hidden sm:inline">Facebook</span>
                             </a>
                           )}
                           {lead.email ? (
@@ -513,16 +516,18 @@ function AppDashboardContent() {
                                 markSent(lead.id);
                               }}
                               disabled={!lead.generatedEmail || lead.status === "generating"}
-                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                              title="Send via Gmail"
+                              aria-label="Send via Gmail"
+                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
                             >
-                              <Send size={11} /> Gmail
+                              <Send size={13} /> <span className="hidden sm:inline">Gmail</span>
                             </button>
                           ) : (
                             <span
                               title="No email scraped for this lead — try WhatsApp, Instagram or Facebook instead."
-                              className="flex items-center gap-1 bg-[#EEEDE7] text-[#08090A]/45 px-2.5 py-1.5 rounded-md text-xs font-medium cursor-not-allowed"
+                              className="inline-flex items-center justify-center gap-1 bg-[#EEEDE7] text-[#08090A]/45 p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium cursor-not-allowed"
                             >
-                              <Send size={11} /> No email
+                              <Send size={13} /> <span className="hidden sm:inline">No email</span>
                             </span>
                           )}
                         </div>

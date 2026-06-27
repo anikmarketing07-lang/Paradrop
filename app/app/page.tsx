@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown, MessageCircle, Phone, MapPin, Globe } from "lucide-react";
@@ -219,7 +219,7 @@ function AppDashboardContent() {
             <div className="text-xs text-[#08090A]/75 hidden md:flex items-center gap-2 bg-[#EEEDE7] border border-[#08090A]/10 px-2.5 py-1.5 rounded-lg">
               <span className="font-semibold text-[#08090A]">{usage.leadCount}</span>
               <span className="text-[#08090A]/65">/</span>
-              <span>{usage.limit === Infinity ? "âˆž" : usage.limit}</span>
+              <span>{usage.limit === Infinity ? "∞" : usage.limit}</span>
               <span className="text-[#08090A]/65">leads</span>
               <span className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold ml-1">{usage.plan}</span>
             </div>
@@ -367,7 +367,7 @@ function AppDashboardContent() {
                     </div>
                     {typeof lead.rating === "number" && (
                       <div className="hidden md:flex items-center gap-1 text-xs text-amber-500 shrink-0">
-                        â˜… {lead.rating}
+                        ★ {lead.rating}
                         {lead.reviews ? <span className="text-[#08090A]/65">({lead.reviews})</span> : null}
                       </div>
                     )}
@@ -387,8 +387,8 @@ function AppDashboardContent() {
                       className="text-xs text-emerald-600 hover:text-emerald-700 disabled:opacity-40 shrink-0 transition-colors"
                     >
                       {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
-                       lead.status === "done" ? "âœ“ Ready" :
-                       lead.status === "sent" ? "âœ“ Sent" : "Generate"}
+                       lead.status === "done" ? "✓ Ready" :
+                       lead.status === "sent" ? "✓ Sent" : "Generate"}
                     </button>
                   </div>
 
@@ -552,7 +552,7 @@ function AppDashboardContent() {
                           onClick={() => generateEmail(lead.id)}
                           className="text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
                         >
-                          Click to generate email â†’
+                          Click to generate email →
                         </button>
                       </div>
                     )}

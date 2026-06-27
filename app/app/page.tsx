@@ -506,16 +506,25 @@ function AppDashboardContent() {
                               <Facebook size={11} /> Facebook
                             </a>
                           )}
-                          <button
-                            onClick={() => {
-                              window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
-                              markSent(lead.id);
-                            }}
-                            disabled={!lead.generatedEmail || lead.status === "generating"}
-                            className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-[#08090A] px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
-                          >
-                            <Send size={11} /> Gmail
-                          </button>
+                          {lead.email ? (
+                            <button
+                              onClick={() => {
+                                window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
+                                markSent(lead.id);
+                              }}
+                              disabled={!lead.generatedEmail || lead.status === "generating"}
+                              className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                            >
+                              <Send size={11} /> Gmail
+                            </button>
+                          ) : (
+                            <span
+                              title="No email scraped for this lead — try WhatsApp, Instagram or Facebook instead."
+                              className="flex items-center gap-1 bg-[#EEEDE7] text-[#08090A]/45 px-2.5 py-1.5 rounded-md text-xs font-medium cursor-not-allowed"
+                            >
+                              <Send size={11} /> No email
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>

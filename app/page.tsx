@@ -176,6 +176,22 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "Organization",
+      "@id": "https://paradrop.in/#org",
+      name: "Paradrop",
+      url: "https://paradrop.in",
+      logo: "https://paradrop.in/paradrop-logo.png",
+      description:
+        "AI lead generation for freelancers and agencies — find local clients and auto-write outreach.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://paradrop.in/#website",
+      url: "https://paradrop.in",
+      name: "Paradrop",
+      publisher: { "@id": "https://paradrop.in/#org" },
+    },
+    {
       "@type": "SoftwareApplication",
       name: "Paradrop",
       applicationCategory: "BusinessApplication",
@@ -245,6 +261,7 @@ export default function Home() {
             <a href="#pricing" className="hover:text-[#08090A] transition-colors">Pricing</a>
             <a href="#testimonials" className="hover:text-[#08090A] transition-colors">Customers</a>
             <a href="#faq" className="hover:text-[#08090A] transition-colors">FAQ</a>
+            <Link href="/blog" className="hover:text-[#08090A] transition-colors">Blog</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/app" className="text-sm text-[#08090A]/65 hover:text-[#08090A] transition-colors hidden sm:block">
@@ -625,6 +642,7 @@ export default function Home() {
               <div className="space-y-2 text-xs text-[#08090A]/70">
                 <a href="#testimonials" className="block hover:text-[#08090A]">Customers</a>
                 <a href="#faq" className="block hover:text-[#08090A]">FAQ</a>
+                <Link href="/blog" className="block hover:text-[#08090A]">Blog</Link>
                 <a href="mailto:hello@paradrop.in" className="block hover:text-[#08090A]">Contact</a>
               </div>
             </div>

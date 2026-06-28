@@ -175,9 +175,12 @@ function AppDashboardContent() {
   async function generateAllEmails() {
     setGeneratingAll(true);
     setActiveTab("compose");
-    for (const lead of selectedLeads) {
-      if (lead.status === "idle") {
-        await generateEmail(lead.id);
+    const pending = selectedLeads.filter((l) => l.status === "idle");
+    for (let i = 0; i < pending.length; i++) {
+      await generateEmail(pending[i].id);
+      // Throttle between calls to stay under the AI provider's per-minute limit.
+      if (i < pending.length - 1) {
+        await new Promise((r) => setTimeout(r, 2500));
       }
     }
     setGeneratingAll(false);

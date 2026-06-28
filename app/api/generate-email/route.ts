@@ -34,15 +34,9 @@ export async function POST(req: NextRequest) {
       hasFB ? "Facebook" : null,
     ].filter(Boolean).join(", ") || "limited contact options";
 
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const groqBody = JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 600,
+        max_tokens: 450,
         temperature: 0.9,
         messages: [
           {
@@ -94,13 +88,35 @@ TASK — write 3 fields:
 Return ONLY: {"subject":"...","email":"...","dm":"..."}`,
           },
         ],
-      }),
     });
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error("Groq email error:", res.status, err);
-      return NextResponse.json({ subject: "Error", email: "API error." }, { status: 400 });
+    // Groq free tier has a tokens-per-minute cap. On 429, back off and retry
+    // a few times so bulk "generate all" doesn't fail mid-batch.
+    let res: Response | null = null;
+    for (let attempt = 0; attempt < 4; attempt++) {
+      res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: groqBody,
+      });
+      if (res.status !== 429) break;
+      const retryAfter = Number(res.headers.get("retry-after"));
+      const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+        ? Math.min(retryAfter * 1000, 8000)
+        : 1500 * (attempt + 1);
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+
+    if (!res || !res.ok) {
+      const err = res ? await res.text() : "no response";
+      console.error("Groq email error:", res?.status, err);
+      return NextResponse.json(
+        { subject: "Rate limited", email: "Server busy — wait a few seconds and hit Generate again on this lead." },
+        { status: 429 }
+      );
     }
 
     const data = await res.json();

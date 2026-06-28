@@ -224,7 +224,7 @@ function AppDashboardContent() {
               <span className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold ml-1">{usage.plan}</span>
             </div>
           )}
-          <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-[#08090A]/70 hover:text-[#08090A] transition-colors">
+          <Link href="/analytics" className="hidden md:flex items-center gap-1.5 text-xs text-[#08090A]/70 hover:text-[#08090A] transition-colors">
             <BarChart2 size={13} /> Analytics
           </Link>
           {usage?.plan === "free" && (

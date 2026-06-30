@@ -1,4 +1,13 @@
 import { SignUp } from "@clerk/nextjs";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign up | Paradrop",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function SignUpPage() {
   return (

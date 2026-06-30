@@ -39,7 +39,29 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+
+    async function loadInitial() {
+      try {
+        const res = await fetch("/api/admin/approve");
+        if (cancelled) return;
+        if (res.status === 403) {
+          setForbidden(true);
+          return;
+        }
+        const data = await res.json();
+        if (!cancelled) setPayments(data.pending || []);
+      } catch {
+        // ignore
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadInitial();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function act(p: Payment, action: "approve" | "reject") {

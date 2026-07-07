@@ -1,22 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-
-const USD_TO_INR = 84;
-const PLAN_USD: Record<string, number> = { pro: 19, agency: 49 };
-const INTERVAL_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
-const INTERVAL_DISCOUNT: Record<string, number> = { monthly: 0, quarterly: 10, yearly: 20 };
-
-// Lifetime deal: fixed INR price, no recurring.
-export const LIFETIME_INR = 6000;
-
-function expectedInr(plan: string, interval: string): number | null {
-  if (plan === "lifetime" && interval === "lifetime") return LIFETIME_INR;
-  const base = PLAN_USD[plan];
-  const months = INTERVAL_MONTHS[interval];
-  const discount = INTERVAL_DISCOUNT[interval];
-  if (!base || !months || discount === undefined) return null;
-  return Math.round(base * months * (1 - discount / 100) * USD_TO_INR);
-}
+import { priceFor, currencyForCountry } from "@/lib/pricing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,11 +25,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid interval." }, { status: 400 });
     }
 
-    const amountInr = expectedInr(plan, interval);
-    if (amountInr === null) {
+    // Currency is resolved SERVER-SIDE from the visitor's geo — never trusted
+    // from the client — so a US visitor can't force cheaper INR pricing.
+    const currency = currencyForCountry(req.headers.get("x-vercel-ip-country"));
+
+    const amount = priceFor(plan, interval, currency);
+    if (amount === null) {
       return NextResponse.json({ error: "Invalid plan/interval." }, { status: 400 });
     }
-    const amountPaise = amountInr * 100;
+    const amountMinor = amount * 100; // paise for INR, cents for USD
 
     const authHeader = "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64");
     const receipt = `r_${userId.slice(-12)}_${Date.now().toString().slice(-8)}`;
@@ -57,10 +45,10 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: amountPaise,
-        currency: "INR",
+        amount: amountMinor,
+        currency,
         receipt,
-        notes: { userId, plan, interval },
+        notes: { userId, plan, interval, currency },
       }),
     });
 

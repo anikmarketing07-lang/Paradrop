@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-
-const USD_TO_INR = 84;
-const PLAN_USD: Record<string, number> = { pro: 19, agency: 49 };
-const INTERVAL_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
-const INTERVAL_DISCOUNT: Record<string, number> = { monthly: 0, quarterly: 10, yearly: 20 };
-const LIFETIME_INR = 6000;
-
-function expectedInr(plan: string, interval: string): number | null {
-  if (plan === "lifetime" && interval === "lifetime") return LIFETIME_INR;
-  const base = PLAN_USD[plan];
-  const months = INTERVAL_MONTHS[interval];
-  const discount = INTERVAL_DISCOUNT[interval];
-  if (!base || !months || discount === undefined) return null;
-  return Math.round(base * months * (1 - discount / 100) * USD_TO_INR);
-}
+import { priceFor } from "@/lib/pricing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,7 +29,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid transaction ID." }, { status: 400 });
     }
 
-    const expected = expectedInr(plan, interval);
+    const expected = priceFor(plan, interval);
     if (expected === null || Math.abs(Number(amount) - expected) > 1) {
       return NextResponse.json({ error: `Amount mismatch. Expected ₹${expected}.` }, { status: 400 });
     }

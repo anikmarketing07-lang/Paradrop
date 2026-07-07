@@ -1,12 +1,16 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucide-react";
+import { PRICES, ANCHOR, CURRENCY_SYMBOL, priceFor, type Currency } from "@/lib/pricing";
 
 type Interval = "monthly" | "quarterly" | "yearly" | "lifetime";
 
-const LIFETIME_INR = 6000;
+function fmt(amount: number, currency: Currency): string {
+  const sym = CURRENCY_SYMBOL[currency];
+  return `${sym}${amount.toLocaleString(currency === "INR" ? "en-IN" : "en-US")}`;
+}
 
 declare global {
   interface Window {
@@ -39,8 +43,6 @@ const INTERVAL_DISCOUNT: Record<Interval, number> = {
   yearly: 20,
   lifetime: 0,
 };
-
-const USD_TO_INR = 84;
 
 type Plan = {
   id: string;
@@ -86,23 +88,10 @@ const plans: Plan[] = [
   },
 ];
 
-function calculatePrice(basePrice: number, interval: Interval) {
-  if (basePrice === 0) return { perMonthUSD: 0, totalUSD: 0, totalINR: 0, months: 0 };
-  if (interval === "lifetime") {
-    return { perMonthUSD: 0, totalUSD: LIFETIME_INR / USD_TO_INR, totalINR: LIFETIME_INR, months: 0 };
-  }
-  const discount = INTERVAL_DISCOUNT[interval];
-  const months = interval === "monthly" ? 1 : interval === "quarterly" ? 3 : 12;
-  const totalUSD = basePrice * months * (1 - discount / 100);
-  const perMonthUSD = totalUSD / months;
-  const totalINR = Math.round(totalUSD * USD_TO_INR);
-  return { perMonthUSD, totalUSD, totalINR, months };
-}
-
 const LIFETIME_PLAN: Plan = {
   id: "lifetime",
   name: "Lifetime",
-  basePrice: LIFETIME_INR,
+  basePrice: 1, // non-zero marker; actual price comes from priceFor(currency)
   desc: "Pay once. Use forever. First 100 buyers only.",
   features: [
     "5,000 leads / month forever",
@@ -120,6 +109,22 @@ const LIFETIME_PLAN: Plan = {
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [interval, setInterval] = useState<Interval>("monthly");
+  // Billing currency is resolved from the visitor's geo (INR for India/SE Asia,
+  // USD elsewhere). The server independently re-resolves it at checkout, so this
+  // is display-only — a client can't spoof a cheaper currency.
+  const [currency, setCurrency] = useState<Currency>("INR");
+
+  useEffect(() => {
+    fetch("/api/geo")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.currency === "INR" || d?.currency === "USD") setCurrency(d.currency);
+      })
+      .catch(() => {});
+  }, []);
+
+  const lifetimePrice = PRICES[currency].lifetime.lifetime!;
+  const lifetimeAnchor = ANCHOR[currency];
 
   async function handleRazorpayCheckout(plan: string, intervalOverride?: Interval) {
     setLoading(plan);
@@ -233,7 +238,7 @@ export default function PricingPage() {
                 Pay once. <span className="shimmer-text">Use forever.</span>
               </h2>
               <p className="text-[#08090A]/65 text-sm mb-4">
-                First 100 buyers only. After that, it&apos;s ₹15,300/year forever. Pay once, save every year after.
+                First 100 buyers only. After that, it&apos;s {fmt(lifetimeAnchor, currency)}/year forever. Pay once, save every year after.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {LIFETIME_PLAN.features.map((f) => (
@@ -246,8 +251,8 @@ export default function PricingPage() {
             </div>
             <div className="md:w-64 text-center md:text-right">
               <div className="flex items-baseline gap-2 justify-center md:justify-end mb-1">
-                <span className="text-[#08090A]/65 line-through text-lg">₹15,300</span>
-                <span className="text-5xl font-bold text-[#08090A]">₹{LIFETIME_INR.toLocaleString("en-IN")}</span>
+                <span className="text-[#08090A]/65 line-through text-lg">{fmt(lifetimeAnchor, currency)}</span>
+                <span className="text-5xl font-bold text-[#08090A]">{fmt(lifetimePrice, currency)}</span>
               </div>
               <div className="text-xs text-amber-500 font-semibold mb-4">One time. Never pay again.</div>
               <button
@@ -256,7 +261,7 @@ export default function PricingPage() {
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/40 transition-all disabled:opacity-50"
               >
                 {loading === "lifetime" ? <Loader2 size={14} className="animate-spin" /> : <Crown size={14} />}
-                Claim lifetime ₹{LIFETIME_INR}
+                Claim lifetime {fmt(lifetimePrice, currency)}
               </button>
               <p className="text-[10px] text-[#08090A]/65 mt-2">Backed by 7-day refund. No questions asked.</p>
             </div>
@@ -291,7 +296,7 @@ export default function PricingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {plans.map((p) => {
-            const price = calculatePrice(p.basePrice, interval);
+            const amount = p.basePrice === 0 ? 0 : priceFor(p.id, interval, currency) ?? 0;
             return (
               <div
                 key={p.id}
@@ -306,10 +311,10 @@ export default function PricingPage() {
                   <div className="text-sm font-medium text-[#08090A]/65 mb-1">{p.name}</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     {p.basePrice === 0 ? (
-                      <span className="text-5xl font-bold text-[#08090A]">₹0</span>
+                      <span className="text-5xl font-bold text-[#08090A]">{fmt(0, currency)}</span>
                     ) : (
                       <>
-                        <span className="text-5xl font-bold text-[#08090A]">₹{price.totalINR.toLocaleString("en-IN")}</span>
+                        <span className="text-5xl font-bold text-[#08090A]">{fmt(amount, currency)}</span>
                         <span className="text-[#08090A]/70 text-sm">/{interval === "monthly" ? "mo" : interval === "quarterly" ? "3mo" : "yr"}</span>
                       </>
                     )}
@@ -317,7 +322,9 @@ export default function PricingPage() {
                   <p className="text-xs text-[#08090A]/70 min-h-[2.5em]">
                     {p.basePrice === 0
                       ? "Free forever, no card needed."
-                      : `One-click via UPI, card, wallet, or netbanking`}
+                      : currency === "INR"
+                        ? "One-click via UPI, card, wallet, or netbanking"
+                        : "Secure checkout via card — Visa, Mastercard, Amex"}
                   </p>
                 </div>
 
@@ -348,7 +355,7 @@ export default function PricingPage() {
                     } disabled:opacity-50`}
                   >
                     {loading === p.stripePlan ? <Loader2 size={14} className="animate-spin" /> : null}
-                    Pay ₹{price.totalINR.toLocaleString("en-IN")}
+                    Pay {fmt(amount, currency)}
                   </button>
                 )}
               </div>

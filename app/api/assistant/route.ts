@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { generateText } from "ai";
+import { chatModel } from "@/lib/ai";
 import { getUserUsage } from "@/lib/usage";
 
 const PREMIUM_PLANS = new Set(["pro", "agency", "lifetime"]);
@@ -26,8 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY) {
       return NextResponse.json(
         { error: "AI assistant not configured. Contact support." },
         { status: 503 }
@@ -57,34 +58,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Last message must be from user." }, { status: 400 });
     }
 
-    const groqMessages = [
-      { role: "system", content: SYSTEM_INSTRUCTION },
-      ...trimmed.map((m) => ({ role: m.role, content: m.content })),
-    ];
-
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        max_tokens: 800,
-        temperature: 0.7,
-        messages: groqMessages,
-      }),
+    const { text } = await generateText({
+      model: chatModel,
+      system: SYSTEM_INSTRUCTION,
+      messages: trimmed.map((m) => ({ role: m.role, content: m.content })),
+      temperature: 0.7,
+      maxOutputTokens: 800,
+      maxRetries: 3,
     });
 
-    if (!res.ok) {
-      const errBody = await res.text();
-      console.error("[assistant] Groq error:", res.status, errBody);
-      return NextResponse.json({ error: "Assistant failed. Try again." }, { status: 500 });
-    }
-
-    const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content?.trim() || "Sorry, I couldn't generate a reply.";
-
+    const reply = text.trim() || "Sorry, I couldn't generate a reply.";
     return NextResponse.json({ reply });
   } catch (err) {
     console.error("[assistant]", err);

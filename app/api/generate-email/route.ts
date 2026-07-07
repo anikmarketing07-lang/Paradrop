@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { generateText, APICallError } from "ai";
+import { chatModel } from "@/lib/ai";
 import { incrementEmails } from "@/lib/usage";
 
 export async function POST(req: NextRequest) {
@@ -8,9 +10,8 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ subject: "Error", email: "Unauthorized" }, { status: 401 });
 
     const { lead, yourSkill, yourName } = await req.json();
-    const apiKey = process.env.GROQ_API_KEY || "";
 
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY) {
       return NextResponse.json({ subject: "Error", email: "Server not configured." }, { status: 500 });
     }
 
@@ -34,14 +35,7 @@ export async function POST(req: NextRequest) {
       hasFB ? "Facebook" : null,
     ].filter(Boolean).join(", ") || "limited contact options";
 
-    const groqBody = JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        max_tokens: 450,
-        temperature: 0.9,
-        messages: [
-          {
-            role: "system",
-            content: `You write cold outreach that makes the reader feel they're MISSING OUT and CURIOUS. Two psychological levers only: FOMO and seduction.
+    const systemPrompt = `You write cold outreach that makes the reader feel they're MISSING OUT and CURIOUS. Two psychological levers only: FOMO and seduction.
 
 FOMO: make them feel their competitors are already winning, clients are slipping away, or an opportunity is closing. Use real details (their rating, city, business type) to make the threat feel personal.
 
@@ -57,11 +51,9 @@ HARD RULES:
 - Subject line: 4-6 words, lowercase, curiosity gap. Make them HAVE to open it.
 - If lead has NO website, that's the killer hook — their competitors with websites are stealing their walk-in customers right now.
 
-Output: ONLY a JSON object with keys "subject", "email", "dm". No markdown, no backticks, no text before or after the JSON.`,
-          },
-          {
-            role: "user",
-            content: `LEAD
+Output: ONLY a JSON object with keys "subject", "email", "dm". No markdown, no backticks, no text before or after the JSON.`;
+
+    const userPrompt = `LEAD
 Name: ${lead.name}
 Type: ${lead.role || lead.industry || "local business"}
 ${cityLine}
@@ -85,48 +77,38 @@ TASK — write 3 fields:
 
 3. "dm" — WhatsApp version, 20-35 words. Casual, lowercase. Start with a FOMO hook ("your competitors in [city] are doing X..."). End with curiosity ("want to see?"). Sound like a friend tipping them off, not a salesman.
 
-Return ONLY: {"subject":"...","email":"...","dm":"..."}`,
-          },
-        ],
-    });
+Return ONLY: {"subject":"...","email":"...","dm":"..."}`;
 
-    // Groq free tier has a tokens-per-minute cap. On 429, back off and retry
-    // a few times so bulk "generate all" doesn't fail mid-batch.
-    let res: Response | null = null;
-    for (let attempt = 0; attempt < 4; attempt++) {
-      res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: groqBody,
+    // The AI SDK retries transient failures (incl. Groq free-tier 429s) with
+    // exponential backoff, honoring Retry-After — replaces the old manual loop.
+    let text: string;
+    try {
+      const out = await generateText({
+        model: chatModel,
+        system: systemPrompt,
+        prompt: userPrompt,
+        temperature: 0.9,
+        maxOutputTokens: 450,
+        maxRetries: 4,
       });
-      if (res.status !== 429) break;
-      const retryAfter = Number(res.headers.get("retry-after"));
-      const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
-        ? Math.min(retryAfter * 1000, 8000)
-        : 1500 * (attempt + 1);
-      await new Promise((r) => setTimeout(r, waitMs));
+      text = out.text;
+    } catch (err) {
+      if (APICallError.isInstance(err) && (err.statusCode === 429 || err.isRetryable)) {
+        console.error("Groq email rate limited:", err.statusCode);
+        return NextResponse.json(
+          { subject: "Rate limited", email: "Server busy — wait a few seconds and hit Generate again on this lead." },
+          { status: 429 }
+        );
+      }
+      throw err;
     }
 
-    if (!res || !res.ok) {
-      const err = res ? await res.text() : "no response";
-      console.error("Groq email error:", res?.status, err);
-      return NextResponse.json(
-        { subject: "Rate limited", email: "Server busy — wait a few seconds and hit Generate again on this lead." },
-        { status: 429 }
-      );
-    }
-
-    const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || "{}";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const result = jsonMatch ? JSON.parse(jsonMatch[0]) : { subject: "Quick question", email: text };
+    const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : { subject: "Quick question", email: text };
 
     await incrementEmails(userId, 1);
 
-    return NextResponse.json(result);
+    return NextResponse.json(parsed);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ subject: "Error", email: "Failed to generate email." }, { status: 500 });

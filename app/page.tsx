@@ -1,12 +1,12 @@
 ﻿import Link from "next/link";
-import { ArrowRight, Zap, Target, Mail, TrendingUp, Shield, Users, Sparkles, CheckCircle2, Clock, Globe, BarChart3, Repeat, Search, Send, Flame } from "lucide-react";
+import { ArrowRight, Zap, Target, Mail, TrendingUp, Shield, Users, Sparkles, CheckCircle2, Clock, Globe, BarChart3, Repeat, Search, Send, Flame, MessageCircle } from "lucide-react";
 import AssistantWidget from "./app/AssistantWidget";
 
 const stats = [
-  { value: "50K+", label: "Leads generated" },
-  { value: "38%", label: "Avg reply rate" },
-  { value: "2,400+", label: "Freelancers" },
-  { value: "$2.4M", label: "Closed deals" },
+  { value: "50+", label: "Leads per search" },
+  { value: "8 sec", label: "To your first batch" },
+  { value: "3", label: "Channels: email · WhatsApp · IG" },
+  { value: "₹0", label: "To get started" },
 ];
 
 const features = [
@@ -88,54 +88,36 @@ const pricing = [
   },
 ];
 
-const testimonials = [
+const useCases = [
   {
-    quote: "Got 3 client inquiries in my first week. I was manually DMing on LinkedIn before — this is a completely different speed.",
-    name: "Arjun M.",
-    role: "Freelance Web Developer",
-    location: "Bangalore, India",
-    avatar: "AM",
-    closed: "$3,200",
+    icon: Search,
+    title: "Find local businesses fast",
+    desc: "Type a niche + city and get up to 50 real businesses — with phone, email, website and socials — in seconds.",
   },
   {
-    quote: "The AI emails don't sound like AI. One client told me my outreach was the most personal cold email he'd ever received.",
-    name: "Sarah K.",
-    role: "Brand Designer",
-    location: "London, UK",
-    avatar: "SK",
-    closed: "$5,800",
+    icon: Mail,
+    title: "AI writes the first draft",
+    desc: "Paradrop reads each business's own website, then writes a personalized cold email. No blank-page paralysis.",
   },
   {
-    quote: "I closed a $4,200 project from a lead I found on Paradrop. Paid for 18 months of Pro in one deal.",
-    name: "Marcus T.",
-    role: "Freelance Copywriter",
-    location: "Toronto, Canada",
-    avatar: "MT",
-    closed: "$4,200",
+    icon: MessageCircle,
+    title: "Reach them where they reply",
+    desc: "Email, WhatsApp, and Instagram DMs — pick the channel each lead actually answers on.",
   },
   {
-    quote: "Switched from Apollo + Mailshake. Paradrop does both in one tool, way cheaper, better UX.",
-    name: "Priya S.",
-    role: "Marketing Consultant",
-    location: "Mumbai, India",
-    avatar: "PS",
-    closed: "$2,100",
+    icon: Target,
+    title: "Real contact info, not guesses",
+    desc: "Emails are MX-verified before you see them, plus direct phone numbers and social handles pulled live.",
   },
   {
-    quote: "Finally a tool that doesn't pretend cold outreach is dead. It works if you do it right — this makes doing it right easy.",
-    name: "Tom W.",
-    role: "Video Editor",
-    location: "Sydney, AU",
-    avatar: "TW",
-    closed: "$1,800",
+    icon: Zap,
+    title: "Skip the manual grind",
+    desc: "No more copy-pasting off Google Maps into spreadsheets. One search does the grunt work for you.",
   },
   {
-    quote: "From 0 to 6 paying clients in 2 months. The personalization is what separates this from every other outreach tool.",
-    name: "Lisa R.",
-    role: "UX Designer",
-    location: "Austin, USA",
-    avatar: "LR",
-    closed: "$7,400",
+    icon: Repeat,
+    title: "One tool, not five",
+    desc: "Replaces a scraper + an email writer + an outreach app. Cheaper, simpler, all in one place.",
   },
 ];
 
@@ -201,9 +183,8 @@ const jsonLd = {
         "AI lead generation for freelancers and agencies. Find local business leads with phone, email, Instagram and website, then auto-write a personalized cold email and WhatsApp DM for each.",
       offers: [
         { "@type": "Offer", name: "Free", price: "0", priceCurrency: "INR" },
-        { "@type": "Offer", name: "Lifetime", price: "6000", priceCurrency: "INR" },
+        { "@type": "Offer", name: "Lifetime", price: "5999", priceCurrency: "INR" },
       ],
-      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "2400" },
     },
     {
       "@type": "FAQPage",
@@ -259,7 +240,7 @@ export default function Home() {
             <a href="#how-it-works" className="hover:text-[#08090A] transition-colors">How it works</a>
             <a href="#features" className="hover:text-[#08090A] transition-colors">Features</a>
             <a href="#pricing" className="hover:text-[#08090A] transition-colors">Pricing</a>
-            <a href="#testimonials" className="hover:text-[#08090A] transition-colors">Customers</a>
+            <a href="#how" className="hover:text-[#08090A] transition-colors">How it works</a>
             <a href="#faq" className="hover:text-[#08090A] transition-colors">FAQ</a>
             <Link href="/blog" className="hover:text-[#08090A] transition-colors">Blog</Link>
           </div>
@@ -282,7 +263,7 @@ export default function Home() {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600/8 border border-emerald-600/30 text-emerald-700 text-xs font-medium mb-8 fade-up">
           <Sparkles size={12} className="text-emerald-600" />
           <span className="shimmer-text font-semibold">New:</span>
-          AI-personalized outreach for freelancers · 2,400+ freelancers & sales reps
+          AI outreach across email · WhatsApp · Instagram
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-8 fade-up-delay-1">
@@ -497,33 +478,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="max-w-6xl mx-auto px-6 py-20">
+      {/* How it works */}
+      <section id="how" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-emerald-600 text-sm font-medium mb-3 uppercase tracking-wider">Customers</div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Freelancers closing deals<br /><span className="shimmer-text">every single week.</span></h2>
+          <div className="text-emerald-600 text-sm font-medium mb-3 uppercase tracking-wider">How it works</div>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Everything you need to land clients<br /><span className="shimmer-text">in one place.</span></h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {testimonials.map((t) => (
-            <div key={t.name} className="gradient-border p-6 card-hover">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-amber-500 text-sm">★</span>
-                  ))}
-                </div>
-                <span className="text-xs font-bold gradient-text-violet">{t.closed} closed</span>
+          {useCases.map((u) => (
+            <div key={u.title} className="gradient-border p-6 card-hover">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-600/20 to-emerald-600/10 border border-emerald-600/30 flex items-center justify-center mb-4">
+                <u.icon size={18} className="text-emerald-600" />
               </div>
-              <p className="text-sm text-[#08090A]/75 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
-              <div className="flex items-center gap-3 pt-4 border-t border-[#08090A]/8">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-600/20 to-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-white">
-                  {t.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-[#08090A] truncate">{t.name}</div>
-                  <div className="text-xs text-[#08090A]/70 truncate">{t.role} · {t.location}</div>
-                </div>
-              </div>
+              <h3 className="text-base font-semibold text-[#08090A] mb-2">{u.title}</h3>
+              <p className="text-sm text-[#08090A]/70 leading-relaxed">{u.desc}</p>
             </div>
           ))}
         </div>
@@ -614,7 +582,7 @@ export default function Home() {
             Get started — it&apos;s free
             <ArrowRight size={18} />
           </Link>
-          <p className="text-[#08090A]/50 text-xs mt-4">No credit card · Cancel anytime · 2,400+ freelancers using it</p>
+          <p className="text-[#08090A]/50 text-xs mt-4">No credit card · Cancel anytime · 20 free leads every month</p>
         </div>
       </section>
 
@@ -640,7 +608,7 @@ export default function Home() {
             <div>
               <div className="text-xs font-semibold text-[#08090A]/85 mb-3 uppercase tracking-wider">Company</div>
               <div className="space-y-2 text-xs text-[#08090A]/70">
-                <a href="#testimonials" className="block hover:text-[#08090A]">Customers</a>
+                <a href="#how" className="block hover:text-[#08090A]">How it works</a>
                 <a href="#faq" className="block hover:text-[#08090A]">FAQ</a>
                 <Link href="/blog" className="block hover:text-[#08090A]">Blog</Link>
                 <a href="mailto:hello@paradrop.in" className="block hover:text-[#08090A]">Contact</a>

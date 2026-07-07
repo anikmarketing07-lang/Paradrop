@@ -118,7 +118,7 @@ export default function AssistantWidget({ plan }: { plan: Plan }) {
               </div>
               <h3 className="text-base font-bold text-[#08090A] mb-2">AI assistant locked</h3>
               <p className="text-xs text-[#08090A]/75 leading-relaxed mb-5">
-                Upgrade to <strong className="text-amber-500">Lifetime (₹6,000)</strong> or Pro to unlock the AI sales coach. Suggests niches, rewrites your pitch, plans your follow-ups.
+                Upgrade to <strong className="text-amber-500">Lifetime (₹5,999)</strong> or Pro to unlock the AI sales coach. Suggests niches, rewrites your pitch, plans your follow-ups.
               </p>
               <Link
                 href="/pricing"

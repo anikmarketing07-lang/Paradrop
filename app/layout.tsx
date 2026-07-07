@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     siteName: "Paradrop",
     title: "Paradrop — Find local clients in 30 seconds, AI writes the pitch",
     description:
-      "20 verified local business leads with phone, email & socials. AI-written cold email + WhatsApp DM for each. Built for freelancers & agencies. Lifetime deal ₹6,000.",
+      "20 verified local business leads with phone, email & socials. AI-written cold email + WhatsApp DM for each. Built for freelancers & agencies. Lifetime deal ₹5,999.",
     images: [{ url: "/paradrop-logo.png", width: 1232, height: 1232, alt: "Paradrop" }],
   },
   twitter: {
@@ -90,7 +90,7 @@ gtag('js', new Date());
 gtag('config', '${GA_ID}');`}
           </Script>
         </head>
-        <body className="min-h-full bg-[#F7F6F2] text-[#08090A] antialiased">{children}</body>
+        <body className="min-h-full bg-[#F7F6F2] text-[#08090A] antialiased overflow-x-clip">{children}</body>
       </html>
     </ClerkProvider>
   );

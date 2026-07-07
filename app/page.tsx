@@ -221,8 +221,8 @@ export default function Home() {
       >
         <span className="inline-flex items-center gap-2 flex-wrap justify-center">
           <Flame size={14} className="animate-pulse" />
-          <strong>Launch deal:</strong> Lifetime access ₹6,000
-          <span className="hidden md:inline opacity-80">— first 100 buyers only, then ₹15,300/year forever.</span>
+          <strong>Launch deal:</strong> Lifetime access ₹5,999
+          <span className="hidden md:inline opacity-80">— first 100 buyers only, then ₹15,999/year forever.</span>
           <span className="inline-flex items-center gap-1 font-bold underline-offset-2 group-hover:underline">
             Claim now <ArrowRight size={12} />
           </span>
@@ -239,8 +239,8 @@ export default function Home() {
           <div className="hidden md:flex items-center gap-8 text-sm text-[#08090A]/65">
             <a href="#how-it-works" className="hover:text-[#08090A] transition-colors">How it works</a>
             <a href="#features" className="hover:text-[#08090A] transition-colors">Features</a>
+            <a href="#how" className="hover:text-[#08090A] transition-colors">What you get</a>
             <a href="#pricing" className="hover:text-[#08090A] transition-colors">Pricing</a>
-            <a href="#how" className="hover:text-[#08090A] transition-colors">How it works</a>
             <a href="#faq" className="hover:text-[#08090A] transition-colors">FAQ</a>
             <Link href="/blog" className="hover:text-[#08090A] transition-colors">Blog</Link>
           </div>
@@ -481,7 +481,7 @@ export default function Home() {
       {/* How it works */}
       <section id="how" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <div className="text-emerald-600 text-sm font-medium mb-3 uppercase tracking-wider">How it works</div>
+          <div className="text-emerald-600 text-sm font-medium mb-3 uppercase tracking-wider">What you get</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Everything you need to land clients<br /><span className="shimmer-text">in one place.</span></h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -608,7 +608,7 @@ export default function Home() {
             <div>
               <div className="text-xs font-semibold text-[#08090A]/85 mb-3 uppercase tracking-wider">Company</div>
               <div className="space-y-2 text-xs text-[#08090A]/70">
-                <a href="#how" className="block hover:text-[#08090A]">How it works</a>
+                <a href="#how" className="block hover:text-[#08090A]">What you get</a>
                 <a href="#faq" className="block hover:text-[#08090A]">FAQ</a>
                 <Link href="/blog" className="block hover:text-[#08090A]">Blog</Link>
                 <a href="mailto:hello@paradrop.in" className="block hover:text-[#08090A]">Contact</a>

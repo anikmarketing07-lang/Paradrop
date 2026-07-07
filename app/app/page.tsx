@@ -198,7 +198,7 @@ function AppDashboardContent() {
   return (
     <div className="min-h-screen bg-[#F7F6F2] text-[#08090A] flex flex-col">
       {/* Top bar */}
-      <nav className="border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
+      <nav className="border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
         <Link href="/" className="flex items-center gap-2">
           <img src="/paradrop-logo.png" alt="Paradrop" className="w-6 h-6 rounded-md object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
@@ -253,7 +253,7 @@ function AppDashboardContent() {
             {/* Your info */}
             <div className="gradient-border p-5 mb-4">
               <div className="text-xs text-[#08090A]/70 uppercase tracking-wider font-medium mb-4">About you</div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs text-[#08090A]/75 block mb-1.5">Your name</label>
                   <input

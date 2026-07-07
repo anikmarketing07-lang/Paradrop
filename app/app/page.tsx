@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Search, Mail, Zap, Send, Loader2, CheckCircle, BarChart2, Crown, MessageCircle, Phone, MapPin, Globe } from "lucide-react";
+import { CITIES } from "@/lib/cities";
 
 function Instagram({ size = 13 }: { size?: number }) {
   return (
@@ -308,9 +309,16 @@ function AppDashboardContent() {
               <input
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                list="city-list"
+                autoComplete="off"
                 placeholder="e.g. Mumbai, Bangalore, Delhi NCR..."
                 className="w-full bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg px-3 py-2.5 text-sm text-[#08090A] placeholder-[#08090A]/45 outline-none focus:border-sky-600/50 transition-colors"
               />
+              <datalist id="city-list">
+                {CITIES.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
               <p className="text-[11px] text-[#08090A]/65 mt-2">Add a city to find local businesses you can pitch.</p>
             </div>
 

@@ -70,13 +70,15 @@ export async function POST(req: NextRequest) {
 
     // Upgrade user + set expiry
     const now = new Date();
-    let expiresAt: Date;
+    const expiresAt = new Date(now);
     if (interval === "lifetime") {
       // Lifetime = ~100 years in the future. Effectively never expires.
-      expiresAt = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
+      expiresAt.setFullYear(expiresAt.getFullYear() + 100);
     } else {
+      // Add real calendar months (not 30-day approximations) so a yearly plan
+      // is a full 365/366 days, not 360 — payers don't lose 5 days.
       const months = interval === "yearly" ? 12 : interval === "quarterly" ? 3 : 1;
-      expiresAt = new Date(now.getTime() + months * 30 * 24 * 60 * 60 * 1000);
+      expiresAt.setMonth(expiresAt.getMonth() + months);
     }
 
     await setUserPlan(userId, plan as Plan);

@@ -325,7 +325,7 @@ function AppDashboardContent() {
             <button
               onClick={findLeads}
               disabled={loading || !selectedNiche}
-              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-[#08090A] py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-sky-600/30"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-emerald-600/30"
             >
               {loading ? (
                 <><Loader2 size={16} className="animate-spin" /> Finding businesses...</>
@@ -347,7 +347,7 @@ function AppDashboardContent() {
               <button
                 onClick={generateAllEmails}
                 disabled={generatingAll || selectedLeads.length === 0}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-600 disabled:opacity-40 text-[#08090A] px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 {generatingAll ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
                 Generate {selectedLeads.length} messages

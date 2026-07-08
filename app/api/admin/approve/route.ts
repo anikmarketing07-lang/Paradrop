@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
     if (action === "approve") {
       const months = payment.interval === "yearly" ? 12 : payment.interval === "quarterly" ? 3 : 1;
       const now = new Date();
-      const expiresAt = new Date(now.getTime() + months * 30 * 24 * 60 * 60 * 1000);
+      const expiresAt = new Date(now);
+      expiresAt.setMonth(expiresAt.getMonth() + months);
       await setUserPlan(targetUserId, payment.plan as Plan);
       payment.status = "approved";
       payment.approvedAt = now.toISOString();

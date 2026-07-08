@@ -116,15 +116,18 @@ async function hasMx(domain: string, cache: Map<string, boolean>, timeoutMs = 12
   const cached = cache.get(domain);
   if (cached !== undefined) return cached;
   let ok = true;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     const records = await Promise.race([
       dns.resolveMx(domain),
-      new Promise<never>((_, rej) => setTimeout(() => rej(new Error("timeout")), timeoutMs)),
+      new Promise<never>((_, rej) => { timer = setTimeout(() => rej(new Error("timeout")), timeoutMs); }),
     ]);
     ok = Array.isArray(records) && records.length > 0;
   } catch (err) {
     const code = (err as NodeJS.ErrnoException)?.code;
     ok = !(code === "ENOTFOUND" || code === "ENODATA"); // definite miss → false
+  } finally {
+    clearTimeout(timer); // don't leave the timeout running once the race settles
   }
   cache.set(domain, ok);
   return ok;
@@ -191,6 +194,13 @@ export async function scrapeContacts(websiteDomain: string): Promise<ScrapedCont
     // If the homepage already yields an email + both socials, skip /contact.
     // Uses the cheap format-level check (no DNS) — MX is verified once at the end.
     if (combined && collectEmails(combined).length && pickHandle(combined, IG_RE) && pickHandle(combined, FB_RE)) break;
+  }
+
+  // Fallback for http-only / bad-SSL sites: many local businesses aren't on
+  // HTTPS, so an https-only fetch returns nothing. Retry once over http.
+  if (!combined && base.startsWith("https://")) {
+    const html = await fetchHtml(base.replace(/^https:\/\//, "http://"), 2500);
+    if (html) combined += "\n" + html;
   }
 
   if (!combined) return EMPTY;

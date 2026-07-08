@@ -39,7 +39,10 @@ export async function POST(req: NextRequest) {
     const meta = (user.publicMetadata || {}) as Record<string, unknown>;
     const pending = (meta.pendingUpiPayments || []) as Array<Record<string, unknown>>;
 
-    if (pending.some((p) => p.txnId === txnTrimmed && p.status === "pending_verification")) {
+    // Reject a txn ID we've seen in ANY state (pending/approved/rejected), not
+    // just pending — otherwise an already-approved ID could be resubmitted and
+    // spawn duplicate pending entries in the admin panel.
+    if (pending.some((p) => p.txnId === txnTrimmed)) {
       return NextResponse.json({ error: "Transaction ID already submitted." }, { status: 409 });
     }
 

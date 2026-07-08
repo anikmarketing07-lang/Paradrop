@@ -103,8 +103,15 @@ Return ONLY: {"subject":"...","email":"...","dm":"..."}`;
       throw err;
     }
 
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : { subject: "Quick question", email: text };
+    // The model is asked for JSON, but malformed output must degrade gracefully
+    // to the raw text instead of throwing a 500.
+    let parsed: { subject?: string; email?: string; dm?: string };
+    try {
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : { subject: "Quick question", email: text };
+    } catch {
+      parsed = { subject: "Quick question", email: text };
+    }
 
     await incrementEmails(userId, 1);
 

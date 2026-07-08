@@ -21,7 +21,11 @@ type PlaceResult = {
 
 function toE164(intlPhone?: string): string {
   if (!intlPhone) return "";
-  return intlPhone.replace(/[^\d+]/g, "");
+  const cleaned = intlPhone.replace(/[^\d+]/g, "");
+  // internationalPhoneNumber already carries a leading +<country code>, which
+  // wa.me needs. If we only got a national number, at least strip the leading
+  // 0 so it isn't an outright invalid WhatsApp target.
+  return cleaned.startsWith("+") ? cleaned : cleaned.replace(/^0+/, "");
 }
 
 function bareDomain(url?: string): string {
@@ -44,9 +48,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ leads: [], error: "Enter a niche or business type." }, { status: 400 });
     }
 
-    // Usage limits
+    // Usage limits — block only when there's no budget left at all. If some
+    // budget remains (e.g. 12/20 used), let the search run and cap the results
+    // to what's left, instead of pre-blocking on the assumption of 20 leads.
     const usage = await getUserUsage(userId);
-    if (usage.leadCount + 20 > usage.limit) {
+    if (usage.leadCount >= usage.limit) {
       return NextResponse.json(
         {
           leads: [],
@@ -57,6 +63,7 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     }
+    const remaining = usage.limit === Infinity ? Infinity : usage.limit - usage.leadCount;
 
     // Build text query: "<niche> in <location>"
     const query = location && String(location).trim()
@@ -147,10 +154,15 @@ export async function POST(req: NextRequest) {
     };
 
     const enrichment = Promise.all(baseLeads.map(enrichOne));
-    const fallback = new Promise<typeof baseLeads>((resolve) =>
-      setTimeout(() => resolve(baseLeads), 12000)
-    );
-    const leads = await Promise.race([enrichment, fallback]);
+    let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
+    const fallback = new Promise<typeof baseLeads>((resolve) => {
+      fallbackTimer = setTimeout(() => resolve(baseLeads), 12000);
+    });
+    const enriched = await Promise.race([enrichment, fallback]);
+    clearTimeout(fallbackTimer); // clear so the timer can't keep the event loop alive
+
+    // Never hand back more leads than the plan's remaining budget.
+    const leads = remaining === Infinity ? enriched : enriched.slice(0, remaining);
 
     await incrementLeads(userId, leads.length);
 

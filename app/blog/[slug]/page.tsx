@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
@@ -68,7 +69,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
       <nav className="border-b border-[#08090A]/10 px-6 py-4 flex items-center justify-between max-w-3xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
+          <Image src="/paradrop-logo.png" alt="Paradrop" width={28} height={28} className="rounded-lg object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <Link href="/blog" className="flex items-center gap-1.5 text-sm text-[#08090A]/70 hover:text-[#08090A] transition-colors">

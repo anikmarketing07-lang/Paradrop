@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowLeft, Clock } from "lucide-react";
 import { posts } from "@/lib/blog";
@@ -21,7 +22,7 @@ export default function BlogIndex() {
     <div className="min-h-screen bg-[#F7F6F2] text-[#08090A]">
       <nav className="border-b border-[#08090A]/10 px-6 py-4 flex items-center justify-between max-w-4xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
+          <Image src="/paradrop-logo.png" alt="Paradrop" width={28} height={28} className="rounded-lg object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <Link href="/" className="flex items-center gap-1.5 text-sm text-[#08090A]/70 hover:text-[#08090A] transition-colors">

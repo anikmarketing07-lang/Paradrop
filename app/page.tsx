@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
-import { ArrowRight, Zap, Target, Mail, TrendingUp, Shield, Users, Sparkles, CheckCircle2, Clock, Globe, BarChart3, Repeat, Search, Send, Flame, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, Zap, Target, Mail, TrendingUp, Shield, Users, Sparkles, CheckCircle2, Clock, Repeat, Search, Flame, MessageCircle } from "lucide-react";
 import AssistantWidget from "./app/AssistantWidget";
 
 const stats = [
@@ -233,7 +234,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 border-b border-[#08090A]/10 bg-[#F7F6F2]/70 backdrop-blur-2xl">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/paradrop-logo.png" alt="Paradrop" className="w-8 h-8 rounded-xl object-cover glow-soft" />
+            <Image src="/paradrop-logo.png" alt="Paradrop" width={32} height={32} className="rounded-xl object-cover glow-soft" />
             <span className="font-bold text-lg tracking-tight">Paradrop</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-[#08090A]/65">
@@ -259,11 +260,13 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-24 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600/8 border border-emerald-600/30 text-emerald-700 text-xs font-medium mb-8 fade-up">
-          <Sparkles size={12} className="text-emerald-600" />
-          <span className="shimmer-text font-semibold">New:</span>
-          AI outreach across email · WhatsApp · Instagram
+      <section className="relative max-w-6xl mx-auto px-6 pt-12 md:pt-24 pb-12 md:pb-24 text-center">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 p-0.5 pr-2.5 sm:p-1 sm:pr-3.5 rounded-full bg-[#08090A]/[0.03] hover:bg-[#08090A]/[0.05] border border-[#08090A]/8 text-[10px] sm:text-xs md:text-sm text-[#08090A]/80 transition-all duration-300 hover:scale-[1.02] shadow-sm mb-6 fade-up max-w-full whitespace-nowrap overflow-x-auto select-none">
+          <span className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-[9px] sm:text-[10px] md:text-xs font-bold tracking-wide uppercase shadow-sm shrink-0">
+            <Sparkles className="animate-pulse shrink-0 w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 text-white" />
+            New
+          </span>
+          <span className="font-medium shrink-0">AI outreach across email · WhatsApp · Instagram</span>
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-8 fade-up-delay-1">
@@ -319,10 +322,10 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-green-500/60" />
               </div>
               <div className="flex-1 bg-[#EEEDE7] rounded-md px-3 py-1 text-xs text-[#08090A]/70 text-center">
-                app.paradrop.in
+                paradrop.in/app
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
               <div className="col-span-1 bg-white rounded-xl p-4 border border-[#08090A]/10">
                 <div className="text-xs text-[#08090A]/70 mb-3">Search leads</div>
                 <div className="space-y-2">
@@ -331,9 +334,10 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="mt-4 btn-gradient rounded-lg py-2 text-center text-xs font-medium text-white">
-                  Find 20 leads →               </div>
+                  Find 20 leads →
+                </div>
               </div>
-              <div className="col-span-2 bg-white rounded-xl p-4 border border-[#08090A]/10">
+              <div className="col-span-1 md:col-span-2 bg-white rounded-xl p-4 border border-[#08090A]/10">
                 <div className="text-xs text-[#08090A]/70 mb-3 flex items-center justify-between">
                   <span>Leads found — 20 results</span>
                   <span className="text-emerald-600">100% verified</span>
@@ -439,7 +443,8 @@ export default function Home() {
           <div className="text-emerald-600 text-sm font-medium mb-3 uppercase tracking-wider">Why Paradrop</div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Apollo + Mailshake + Hunter,<br /><span className="shimmer-text">for 1/10th the price.</span></h2>
         </div>
-        <div className="gradient-border-animated p-8 overflow-x-auto">
+        {/* Desktop comparison table (hidden on mobile) */}
+        <div className="hidden md:block gradient-border-animated p-8 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#08090A]/10">
@@ -475,6 +480,77 @@ export default function Home() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile comparison view (hidden on desktop, stacked card layout) */}
+        <div className="block md:hidden space-y-4">
+          {/* Paradrop Card */}
+          <div className="gradient-border-animated p-6 border-[#0E8C66]/35 bg-[#0E8C66]/[0.01]">
+            <div className="flex items-center justify-between border-b border-[#08090A]/10 pb-4 mb-4">
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center">
+                  <Zap size={10} className="text-white" fill="white" />
+                </div>
+                <span className="font-bold text-sm text-[#08090A]">Paradrop</span>
+              </div>
+              <span className="text-lg font-bold text-[#0E8C66]">$19/mo</span>
+            </div>
+            <ul className="space-y-2.5 text-xs">
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>AI personalization</span>
+                <span className="font-semibold text-emerald-600">Built-in</span>
+              </li>
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>Lead search + outreach in one</span>
+                <span className="font-semibold text-emerald-600">Yes (All-in-one)</span>
+              </li>
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>For freelancers & reps</span>
+                <span className="font-semibold text-emerald-600">Yes (Tailored)</span>
+              </li>
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>Setup time</span>
+                <span className="font-semibold">2 min</span>
+              </li>
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>Free tier</span>
+                <span className="font-semibold">20 leads/mo</span>
+              </li>
+              <li className="flex items-center justify-between text-[#08090A]/75">
+                <span>Verified emails</span>
+                <span className="font-semibold text-emerald-600">Yes</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Competitors Group */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Apollo + Mailshake Card */}
+            <div className="gradient-border p-4 bg-[#08090A]/[0.02]">
+              <h3 className="font-bold text-xs text-[#08090A]/85 mb-1.5">Apollo + Mailshake</h3>
+              <div className="text-sm font-bold text-[#08090A]/75 mb-3">$199+/mo</div>
+              <ul className="space-y-2 text-[10px] text-[#08090A]/65">
+                <li>• Extra $$ for AI</li>
+                <li>• Needs two tools</li>
+                <li>• Enterprise focus</li>
+                <li>• 30 min setup</li>
+                <li>• Trial only</li>
+              </ul>
+            </div>
+
+            {/* Hunter + Lemlist Card */}
+            <div className="gradient-border p-4 bg-[#08090A]/[0.02]">
+              <h3 className="font-bold text-xs text-[#08090A]/85 mb-1.5">Hunter + Lemlist</h3>
+              <div className="text-sm font-bold text-[#08090A]/75 mb-3">$149+/mo</div>
+              <ul className="space-y-2 text-[10px] text-[#08090A]/65">
+                <li>• Extra $$ for AI</li>
+                <li>• Needs two tools</li>
+                <li>• Enterprise focus</li>
+                <li>• 20 min setup</li>
+                <li>• 25 searches only</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -533,11 +609,10 @@ export default function Home() {
               </div>
               <Link
                 href={p.href}
-                className={`block text-center py-3 rounded-lg text-sm font-semibold transition-all ${
-                  p.highlight
-                    ? "btn-gradient text-white"
-                    : "border border-[#08090A]/12 bg-[#08090A]/3 text-[#08090A]/75 hover:text-[#08090A] hover:border-[#08090A]/18 hover:bg-[#EEEDE7]"
-                }`}
+                className={`block text-center py-3 rounded-lg text-sm font-semibold transition-all ${p.highlight
+                  ? "btn-gradient text-white"
+                  : "border border-[#08090A]/12 bg-[#08090A]/3 text-[#08090A]/75 hover:text-[#08090A] hover:border-[#08090A]/18 hover:bg-[#EEEDE7]"
+                  }`}
               >
                 {p.cta}
               </Link>
@@ -592,7 +667,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
+                <Image src="/paradrop-logo.png" alt="Paradrop" width={28} height={28} className="rounded-lg object-cover" />
                 <span className="font-bold text-sm">Paradrop</span>
               </div>
               <p className="text-xs text-[#08090A]/70 leading-relaxed max-w-xs">AI-powered lead generation and cold outreach built for freelancers, sales reps, and indie agencies.</p>

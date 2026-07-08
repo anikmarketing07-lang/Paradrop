@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Loader2, CheckCircle2, RefreshCw, Crown, Flame } from "lucide-react";
 import { PRICES, ANCHOR, CURRENCY_SYMBOL, priceFor, type Currency } from "@/lib/pricing";
 
@@ -207,7 +208,7 @@ export default function PricingPage() {
 
       <nav className="border-b border-[#08090A]/10 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/paradrop-logo.png" alt="Paradrop" className="w-7 h-7 rounded-lg object-cover" />
+          <Image src="/paradrop-logo.png" alt="Paradrop" width={28} height={28} className="rounded-lg object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
         <Link href="/" className="flex items-center gap-1.5 text-sm text-[#08090A]/70 hover:text-[#08090A] transition-colors">
@@ -240,7 +241,7 @@ export default function PricingPage() {
               <p className="text-[#08090A]/65 text-sm mb-4">
                 First 100 buyers only. After that, it&apos;s {fmt(lifetimeAnchor, currency)}/year forever. Pay once, save every year after.
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {LIFETIME_PLAN.features.map((f) => (
                   <div key={f} className="flex items-start gap-1.5 text-xs text-[#08090A]/75">
                     <CheckCircle2 size={12} className="text-amber-500 shrink-0 mt-0.5" />
@@ -270,12 +271,12 @@ export default function PricingPage() {
 
         {/* Interval toggle */}
         <div className="flex justify-center mb-12">
-          <div className="inline-flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-xl p-1">
+          <div className="inline-flex flex-wrap sm:flex-nowrap items-center justify-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-xl p-1 max-w-full">
             {(["monthly", "quarterly", "yearly"] as Interval[]).map((i) => (
               <button
                 key={i}
                 onClick={() => setInterval(i)}
-                className={`relative px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`relative px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   interval === i
                     ? "bg-gradient-to-br from-emerald-600 to-emerald-600 text-[#08090A]"
                     : "text-[#08090A]/75 hover:text-[#08090A]"
@@ -283,7 +284,7 @@ export default function PricingPage() {
               >
                 {INTERVAL_LABELS[i]}
                 {INTERVAL_DISCOUNT[i] > 0 && (
-                  <span className={`ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  <span className={`ml-1.5 sm:ml-2 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                     interval === i ? "bg-white/20 text-[#08090A]" : "bg-emerald-500/12 text-emerald-600"
                   }`}>
                     -{INTERVAL_DISCOUNT[i]}%

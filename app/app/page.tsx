@@ -22,6 +22,7 @@ function Facebook({ size = 13 }: { size?: number }) {
   );
 }
 import Link from "next/link";
+import Image from "next/image";
 import { UserButton, useUser } from "@clerk/nextjs";
 import AssistantWidget from "./AssistantWidget";
 
@@ -198,12 +199,12 @@ function AppDashboardContent() {
   return (
     <div className="min-h-screen bg-[#F7F6F2] text-[#08090A] flex flex-col">
       {/* Top bar */}
-      <nav className="border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/paradrop-logo.png" alt="Paradrop" className="w-6 h-6 rounded-md object-cover" />
+      <nav className="sticky top-0 z-50 border-b border-[#08090A]/10 bg-[#F7F6F2]/90 backdrop-blur-xl px-3 sm:px-6 py-3 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+        <Link href="/" className="flex items-center gap-2 shrink-0 order-1">
+          <Image src="/paradrop-logo.png" alt="Paradrop" width={24} height={24} className="rounded-md object-cover" />
           <span className="font-bold text-sm">Paradrop</span>
         </Link>
-        <div className="flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-[#EEEDE7] border border-[#08090A]/10 rounded-lg p-0.5 order-3 w-full sm:w-auto justify-center sm:order-2">
           {(["search", "leads", "compose"] as const).map((tab) => (
             <button
               key={tab}
@@ -218,7 +219,7 @@ function AppDashboardContent() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 order-2 sm:order-3 shrink-0">
           {usage && (
             <div className="text-xs text-[#08090A]/75 hidden md:flex items-center gap-2 bg-[#EEEDE7] border border-[#08090A]/10 px-2.5 py-1.5 rounded-lg">
               <span className="font-semibold text-[#08090A]">{usage.leadCount}</span>
@@ -228,11 +229,11 @@ function AppDashboardContent() {
               <span className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold ml-1">{usage.plan}</span>
             </div>
           )}
-          <Link href="/analytics" className="hidden md:flex items-center gap-1.5 text-xs text-[#08090A]/70 hover:text-[#08090A] transition-colors">
+          <Link href="/analytics" className="flex items-center gap-1.5 text-xs text-[#08090A]/70 hover:text-[#08090A] transition-colors">
             <BarChart2 size={13} /> Analytics
           </Link>
           {usage?.plan === "free" && (
-            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-emerald-600/8 border border-emerald-600/25 text-emerald-600 hover:bg-emerald-600/15 px-2.5 py-1.5 rounded-lg transition-colors">
+            <Link href="/pricing" className="flex items-center gap-1.5 text-xs bg-emerald-600/8 border border-emerald-600/25 text-emerald-600 hover:bg-emerald-600/15 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors shrink-0">
               <Crown size={12} /> Upgrade
             </Link>
           )}
@@ -362,45 +363,50 @@ function AppDashboardContent() {
                     lead.selected ? "opacity-100" : "opacity-40"
                   }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="checkbox"
-                      checked={lead.selected}
-                      onChange={() => toggleLead(lead.id)}
-                      className="w-4 h-4 accent-sky-600 cursor-pointer"
-                    />
-                    <div className="w-9 h-9 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
-                      {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={lead.selected}
+                        onChange={() => toggleLead(lead.id)}
+                        className="w-4 h-4 accent-[#0E8C66] cursor-pointer shrink-0"
+                      />
+                      <div className="w-8 h-8 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
+                        {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm text-[#08090A] truncate">{lead.name}</div>
+                        <div className="text-xs text-[#08090A]/60 truncate">{lead.role}</div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm text-[#08090A]">{lead.name}</div>
-                      <div className="text-xs text-[#08090A]/70">{lead.role}</div>
+
+                    <div className="flex items-center gap-2 pl-7 sm:pl-0 shrink-0 justify-between sm:justify-end">
+                      {typeof lead.rating === "number" && (
+                        <div className="flex items-center gap-0.5 text-xs text-amber-500">
+                          ★ {lead.rating}
+                          {lead.reviews ? <span className="text-[#08090A]/55">({lead.reviews})</span> : null}
+                        </div>
+                      )}
+                      {lead.verified ? (
+                        <div className="flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                          <CheckCircle size={10} />
+                          Has phone
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 text-[11px] text-[#08090A]/60 bg-[#EEEDE7] px-2 py-0.5 rounded-full">
+                          No phone
+                        </div>
+                      )}
+                      <button
+                        onClick={() => generateEmail(lead.id)}
+                        disabled={lead.status === "generating" || lead.status === "sent"}
+                        className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 disabled:opacity-40 transition-all ml-1 bg-emerald-600/8 border border-emerald-600/20 px-2.5 py-1 rounded-md hover:bg-emerald-600/15"
+                      >
+                        {lead.status === "generating" ? <Loader2 size={12} className="animate-spin" /> :
+                         lead.status === "done" ? "✓ Ready" :
+                         lead.status === "sent" ? "✓ Sent" : "Generate"}
+                      </button>
                     </div>
-                    {typeof lead.rating === "number" && (
-                      <div className="hidden md:flex items-center gap-1 text-xs text-amber-500 shrink-0">
-                        ★ {lead.rating}
-                        {lead.reviews ? <span className="text-[#08090A]/65">({lead.reviews})</span> : null}
-                      </div>
-                    )}
-                    {lead.verified ? (
-                      <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/12 px-2 py-1 rounded-full shrink-0">
-                        <CheckCircle size={10} />
-                        Has phone
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1 text-xs text-[#08090A]/65 bg-[#EEEDE7] px-2 py-1 rounded-full shrink-0">
-                        No phone
-                      </div>
-                    )}
-                    <button
-                      onClick={() => generateEmail(lead.id)}
-                      disabled={lead.status === "generating" || lead.status === "sent"}
-                      className="text-xs text-emerald-600 hover:text-emerald-700 disabled:opacity-40 shrink-0 transition-colors"
-                    >
-                      {lead.status === "generating" ? <Loader2 size={14} className="animate-spin" /> :
-                       lead.status === "done" ? "✓ Ready" :
-                       lead.status === "sent" ? "✓ Sent" : "Generate"}
-                    </button>
                   </div>
 
                   {/* Contact details + channel buttons */}
@@ -467,82 +473,84 @@ function AppDashboardContent() {
               <div className="space-y-4">
                 {leads.filter((l) => l.selected).map((lead) => (
                   <div key={lead.id} className="gradient-border p-5">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700">
+                        <div className="w-8 h-8 rounded-full bg-emerald-600/15 border border-emerald-600/30 flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
                           {lead.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-[#08090A]">{lead.name}</div>
-                          <div className="text-xs text-[#08090A]/70">{lead.email}</div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-[#08090A] truncate">{lead.name}</div>
+                          <div className="text-xs text-[#08090A]/60 truncate">{lead.email}</div>
                         </div>
                       </div>
-                      {lead.status === "sent" ? (
-                        <span className="text-xs text-emerald-600 bg-emerald-500/12 px-2 py-1 rounded-full flex items-center gap-1">
-                          <CheckCircle size={10} /> Sent
-                        </span>
-                      ) : (
-                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                          {waLink(lead) && (
-                            <a
-                              href={waLink(lead)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => markSent(lead.id)}
-                              title="WhatsApp"
-                              aria-label="Send via WhatsApp"
-                              className={`inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
-                            >
-                              <MessageCircle size={13} /> <span className="hidden sm:inline">WhatsApp</span>
-                            </a>
-                          )}
-                          {igLink(lead) && (
-                            <a
-                              href={igLink(lead)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Instagram DM"
-                              aria-label="Send via Instagram"
-                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
-                            >
-                              <Instagram size={13} /> <span className="hidden sm:inline">Instagram</span>
-                            </a>
-                          )}
-                          {fbLink(lead) && (
-                            <a
-                              href={fbLink(lead)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Facebook"
-                              aria-label="Send via Facebook"
-                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
-                            >
-                              <Facebook size={13} /> <span className="hidden sm:inline">Facebook</span>
-                            </a>
-                          )}
-                          {lead.email ? (
-                            <button
-                              onClick={() => {
-                                window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
-                                markSent(lead.id);
-                              }}
-                              disabled={!lead.generatedEmail || lead.status === "generating"}
-                              title="Send via Gmail"
-                              aria-label="Send via Gmail"
-                              className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
-                            >
-                              <Send size={13} /> <span className="hidden sm:inline">Gmail</span>
-                            </button>
-                          ) : (
-                            <span
-                              title="No email scraped for this lead — try WhatsApp, Instagram or Facebook instead."
-                              className="inline-flex items-center justify-center gap-1 bg-[#EEEDE7] text-[#08090A]/45 p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium cursor-not-allowed"
-                            >
-                              <Send size={13} /> <span className="hidden sm:inline">No email</span>
-                            </span>
-                          )}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1.5 flex-wrap justify-start sm:justify-end pl-11 sm:pl-0 shrink-0">
+                        {lead.status === "sent" ? (
+                          <span className="text-xs text-emerald-600 bg-emerald-500/12 px-2.5 py-1.5 rounded-full flex items-center gap-1 font-medium">
+                            <CheckCircle size={10} /> Sent
+                          </span>
+                        ) : (
+                          <>
+                            {waLink(lead) && (
+                              <a
+                                href={waLink(lead)!}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => markSent(lead.id)}
+                                title="WhatsApp"
+                                aria-label="Send via WhatsApp"
+                                className={`inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all ${!lead.generatedEmail ? "opacity-40 pointer-events-none" : ""}`}
+                              >
+                                <MessageCircle size={13} /> <span className="hidden sm:inline">WhatsApp</span>
+                              </a>
+                            )}
+                            {igLink(lead) && (
+                              <a
+                                href={igLink(lead)!}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Instagram DM"
+                                aria-label="Send via Instagram"
+                                className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
+                              >
+                                <Instagram size={13} /> <span className="hidden sm:inline">Instagram</span>
+                              </a>
+                            )}
+                            {fbLink(lead) && (
+                              <a
+                                href={fbLink(lead)!}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Facebook"
+                                aria-label="Send via Facebook"
+                                className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
+                              >
+                                <Facebook size={13} /> <span className="hidden sm:inline">Facebook</span>
+                              </a>
+                            )}
+                            {lead.email ? (
+                              <button
+                                onClick={() => {
+                                  window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}&su=${encodeURIComponent(lead.emailSubject || "")}&body=${encodeURIComponent(lead.generatedEmail || "")}`, "_blank");
+                                  markSent(lead.id);
+                                }}
+                                disabled={!lead.generatedEmail || lead.status === "generating"}
+                                title="Send via Gmail"
+                                aria-label="Send via Gmail"
+                                className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium transition-all"
+                              >
+                                <Send size={13} /> <span className="hidden sm:inline">Gmail</span>
+                              </button>
+                            ) : (
+                              <span
+                                title="No email scraped for this lead — try WhatsApp, Instagram or Facebook instead."
+                                className="inline-flex items-center justify-center gap-1 bg-[#EEEDE7] text-[#08090A]/45 p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium cursor-not-allowed"
+                              >
+                                <Send size={13} /> <span className="hidden sm:inline">No email</span>
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     {lead.status === "generating" ? (

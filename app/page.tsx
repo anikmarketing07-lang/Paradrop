@@ -3,7 +3,7 @@ import { ArrowRight, Zap, Target, Mail, TrendingUp, Shield, Users, Sparkles, Che
 import AssistantWidget from "./app/AssistantWidget";
 
 const stats = [
-  { value: "50+", label: "Leads per search" },
+  { value: "20", label: "Leads per search" },
   { value: "4", label: "Channels: email · WhatsApp · IG · FB" },
   { value: "100%", label: "Google-verified data" },
   { value: "2 min", label: "Setup, no card needed" },
@@ -92,7 +92,7 @@ const useCases = [
   {
     icon: Search,
     title: "Find local businesses fast",
-    desc: "Type a niche + city and get up to 50 real businesses — with phone, email, website and socials — in seconds.",
+    desc: "Type a niche + city and get 20 real businesses — with phone, email, website and socials — in seconds.",
   },
   {
     icon: Mail,

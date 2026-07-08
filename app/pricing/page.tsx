@@ -226,8 +226,8 @@ export default function PricingPage() {
         </div>
 
         {/* === LIFETIME DEAL HERO === */}
-        <div className="mb-12 gradient-border-animated glow-violet p-7 md:p-9 relative overflow-hidden">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase shadow-lg shadow-amber-500/40 flex items-center gap-1">
+        <div className="mb-12 gradient-border-animated glow-violet p-7 md:p-9 pt-8 relative">
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-full tracking-wider uppercase shadow-lg shadow-amber-500/40 flex items-center gap-1">
             <Flame size={11} /> Limited launch deal
           </div>
           <div className="md:flex items-center gap-8">
@@ -278,14 +278,14 @@ export default function PricingPage() {
                 onClick={() => setInterval(i)}
                 className={`relative px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   interval === i
-                    ? "bg-gradient-to-br from-emerald-600 to-emerald-600 text-[#08090A]"
-                    : "text-[#08090A]/75 hover:text-[#08090A]"
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "text-[#08090A]/60 hover:text-[#08090A]"
                 }`}
               >
                 {INTERVAL_LABELS[i]}
                 {INTERVAL_DISCOUNT[i] > 0 && (
                   <span className={`ml-1.5 sm:ml-2 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                    interval === i ? "bg-white/20 text-[#08090A]" : "bg-emerald-500/12 text-emerald-600"
+                    interval === i ? "bg-white/20 text-white" : "bg-emerald-500/12 text-emerald-600"
                   }`}>
                     -{INTERVAL_DISCOUNT[i]}%
                   </span>
@@ -304,7 +304,7 @@ export default function PricingPage() {
                 className={`${p.highlight ? "gradient-border-animated glow-violet" : "gradient-border"} p-7 relative card-hover`}
               >
                 {p.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 btn-gradient text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap btn-gradient text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">
                     Most popular
                   </div>
                 )}
@@ -381,4 +381,4 @@ export default function PricingPage() {
       </div>
     </div>
   );
-}
+        }

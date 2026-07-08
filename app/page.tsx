@@ -4,9 +4,9 @@ import AssistantWidget from "./app/AssistantWidget";
 
 const stats = [
   { value: "50+", label: "Leads per search" },
-  { value: "8 sec", label: "To your first batch" },
-  { value: "3", label: "Channels: email · WhatsApp · IG" },
-  { value: "₹0", label: "To get started" },
+  { value: "4", label: "Channels: email · WhatsApp · IG · FB" },
+  { value: "100%", label: "Google-verified data" },
+  { value: "2 min", label: "Setup, no card needed" },
 ];
 
 const features = [

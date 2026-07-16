@@ -115,6 +115,26 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             Try Paradrop free <ArrowRight size={14} />
           </Link>
         </div>
+
+        {/* Read next — internal links so crawlers (and readers) can hop between posts */}
+        <div className="mt-12">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-[#08090A]/60 mb-4">Read next</h3>
+          <div className="space-y-3">
+            {posts.filter((p) => p.slug !== post.slug).map((p) => (
+              <Link
+                key={p.slug}
+                href={`/blog/${p.slug}`}
+                className="block gradient-border p-4 hover:bg-[#EEEDE7] transition-colors"
+              >
+                <div className="text-sm font-medium text-[#08090A] mb-1">{p.title}</div>
+                <div className="text-xs text-[#08090A]/60 line-clamp-1">{p.description}</div>
+              </Link>
+            ))}
+            <Link href="/blog" className="inline-flex items-center gap-1.5 text-xs text-emerald-600 hover:text-emerald-700 font-medium mt-1">
+              All posts <ArrowRight size={12} />
+            </Link>
+          </div>
+        </div>
       </article>
     </div>
   );

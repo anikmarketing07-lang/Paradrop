@@ -664,7 +664,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-[#08090A]/10 px-6 py-12 bg-[#08090A]/3">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-10">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <Image src="/paradrop-logo.png" alt="Paradrop" width={28} height={28} className="rounded-lg object-cover" />
@@ -687,6 +687,14 @@ export default function Home() {
                 <a href="#faq" className="block hover:text-[#08090A]">FAQ</a>
                 <Link href="/blog" className="block hover:text-[#08090A]">Blog</Link>
                 <a href="mailto:hello@paradrop.in" className="block hover:text-[#08090A]">Contact</a>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-[#08090A]/85 mb-3 uppercase tracking-wider">From the blog</div>
+              <div className="space-y-2 text-xs text-[#08090A]/70">
+                <Link href="/blog/find-local-clients-freelancer-india" className="block hover:text-[#08090A]">Find local clients in India</Link>
+                <Link href="/blog/apollo-alternative-india" className="block hover:text-[#08090A]">Apollo alternative for India</Link>
+                <Link href="/blog/cold-whatsapp-outreach-templates" className="block hover:text-[#08090A]">Cold WhatsApp templates</Link>
               </div>
             </div>
             <div>

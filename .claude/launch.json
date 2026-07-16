@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "listen-together",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["C:/Users/anik/OneDrive/Desktop/listen-together/server.ts"],
+      "port": 3020
     }
   ]
 }

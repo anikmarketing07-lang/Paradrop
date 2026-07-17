@@ -700,9 +700,9 @@ export default function Home() {
             <div>
               <div className="text-xs font-semibold text-[#08090A]/85 mb-3 uppercase tracking-wider">Legal</div>
               <div className="space-y-2 text-xs text-[#08090A]/70">
-                <a href="#" className="block hover:text-[#08090A]">Privacy</a>
-                <a href="#" className="block hover:text-[#08090A]">Terms</a>
-                <a href="#" className="block hover:text-[#08090A]">Refunds</a>
+                <Link href="/privacy" className="block hover:text-[#08090A]">Privacy</Link>
+                <Link href="/terms" className="block hover:text-[#08090A]">Terms</Link>
+                <Link href="/refunds" className="block hover:text-[#08090A]">Refunds</Link>
               </div>
             </div>
           </div>
